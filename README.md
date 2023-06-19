@@ -1,6 +1,8 @@
 # vue-sui
 
-Vue component to connect your dapp to Sui blockchain
+Vue component to connect your dapp to Sui blockchain.
+
+Includes (suidouble)[https://github.com/suidouble/suidouble] library for easier interaction with Move smart contracts.
 
 ### installation
 

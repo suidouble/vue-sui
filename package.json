@@ -1,7 +1,7 @@
 {
   "name": "vue-sui",
   "description": "Vue component to connect your dapp to Sui blockchain",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "files": ["dist/*"],
   "main": "dist/vue-sui.umd.js",
   "scripts": {
