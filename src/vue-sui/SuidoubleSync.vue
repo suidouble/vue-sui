@@ -45,6 +45,8 @@ export default {
             debug: true,
             defaultChain: this.defaultChain,
         });
+        console.log('mounted', this.suiInBrowser._defaultChain);
+
         this.adapters = Object.values(this.suiInBrowser.adapters);
         this.suiInBrowser.addEventListener('adapter', (e)=>{
             this.adapters.push(e.detail);

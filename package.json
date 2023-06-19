@@ -1,7 +1,7 @@
 {
   "name": "vue-sui",
-  "description": "",
-  "version": "0.0.2",
+  "description": "Vue component to connect your dapp to Sui blockchain",
+  "version": "0.0.9",
   "files": ["dist/*"],
   "main": "dist/vue-sui.umd.js",
   "scripts": {
@@ -12,11 +12,23 @@
     "build:component": "vue-cli-service build --target lib --name vue-sui src/vue-sui/index.js"
   },
   "peerDependencies": {
-    "vue": "^3.0.0"
+    "vue": "^3.0.0",
+    "suidouble": "^0.0.21"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "sui",
+    "sui move",
+    "move",
+    "smart contract",
+    "smart contracts",
+    "sui.js",
+    "web3",
+    "dapps",
+    "dapp",
+    "vue"
+  ],
+  "author": "Jeka Kiselyov <jeka911@gmail.com> (https://github.com/jeka-kiselyov)",
+  "license": "MIT",
   "devDependencies": {
     "vue": "^3.3.4",
     "@vue/cli-plugin-babel": "~5.0.8",
@@ -28,7 +40,7 @@
     "eslint-plugin-vue": "^7.0.0",
     "less": "^4.1.2",
     "less-loader": "^6.0.0",
-    "suidouble": "^0.0.20"
+    "suidouble": "^0.0.21"
   },
   "eslintConfig": {
     "root": true,

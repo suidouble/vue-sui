@@ -1,6 +1,6 @@
 <template>
     <div class="signinwithsui_button" @click="this.$refs.signin.onClick();">
-        <SignInWithSui ref="signin" @connected="this.$emit('connected')" @disconnected="this.$emit('disconnected')" @suiMaster="onSuiMaster" />
+        <SignInWithSui :defaultChain="defaultChain" ref="signin" @wrongchain="onWrongChain" @connected="this.$emit('connected')" @disconnected="this.$emit('disconnected')" @suiMaster="onSuiMaster" />
     </div>
 </template>
 <style scoped src="./style.css">
@@ -10,7 +10,13 @@ import SignInWithSui from "./SignInWithSui.vue";
 
 export default {
 	name: 'SignInWithSuiButton',
-    emits: ['suiMaster', 'disconnected', 'connected'],
+    emits: ['suiMaster', 'disconnected', 'connected', 'wrongchain'],
+	props: {
+        defaultChain: {
+            default: 'sui:devnet',
+            type: String,
+        },
+    },
     components: { 
         SignInWithSui 
     },
@@ -21,6 +27,9 @@ export default {
         };
     },
     methods: {
+        onWrongChain(tryingTo) {
+            this.$emit('wrongchain', tryingTo);
+        },
         onSuiMaster(suiMaster) {
             this.$emit('suiMaster', suiMaster);
         }

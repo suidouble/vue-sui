@@ -6,7 +6,7 @@
     </div>
 
     <SignInWithSuiDialog :showing="showingDialog" @hidden="this.showingDialog = false;" :adapters="adapters" @click="onAdapterClick" />
-    <SuidoubleSync ref="sui" :defaultChain="defaultChain" @adapters="onSuiAdapters" @suiMaster="onSuiMaster" @loaded="onLibsLoaded" @connected="onConnected" @disconnected="onDisconnected"  />
+    <SuidoubleSync ref="sui" v-if="libsRequested" :defaultChain="defaultChain" @adapters="onSuiAdapters" @suiMaster="onSuiMaster" @loaded="onLibsLoaded" @connected="onConnected" @disconnected="onDisconnected"  />
 
 </template>
 
@@ -16,7 +16,7 @@ import SignInWithSuiDialog from './SignInWithSuiDialog.vue';
 
 export default {
 	name: 'SignInWithSui',
-    emits: ['suiMaster', 'disconnected', 'connected'],
+    emits: ['suiMaster', 'disconnected', 'connected', 'wrongchain'],
 	props: {
         defaultChain: {
             default: 'sui:devnet',
@@ -34,18 +34,29 @@ export default {
 	data() {
 		return {
 			isLoading: false,
-            libsRequested: false,
+            libsRequested: true,
 
             adapters: [],
             connectedAddress: null,
             connectedChain: null,
 
+            forceChainCalculated: null,
             suiMaster: null,
 
             showingDialog: false,
 		}
 	},
 	watch: {
+        defaultChain: async function() {
+            // reinit child component
+            this.connectedAddress = null;
+            this.connectedChain = null;
+            this.suiMaster = null;
+            console.error('switched');
+            this.libsRequested = false;
+            await new Promise((res)=>setTimeout(res, 50));
+            this.libsRequested = true;
+        },
 	},
 	computed: {
 		displayAddress() {
@@ -63,7 +74,10 @@ export default {
          */
         onSuiMaster(suiMaster) {
             this.suiMaster = suiMaster;
-            this.$emit('suiMaster', suiMaster);
+
+            if (!this.defaultChain || this.defaultChain == this.suiMaster.connectedChain) {
+                this.$emit('suiMaster', suiMaster);
+            }
 
             if (this.__suiMasterPromise) {
                 if (this.suiMaster) {
@@ -81,11 +95,17 @@ export default {
         onSuiAdapters(adapters) {
             this.adapters = adapters;
         },
-        isSuiMasterConnected() {
+        isSuiMasterConnected(requireChainName = null) {
             if (this.suiMaster && this.suiMaster.address) {
+                if (requireChainName && this.suiMaster.connectedChain != requireChainName) {
+                    return false;
+                }
                 return true;
             } else if (this.suiMaster && this.suiMaster.signer && this.suiMaster.signer.connectedAddress) {
                 // backward compatible
+                if (requireChainName && this.suiMaster.signer.connectedChain != requireChainName) {
+                    return false;
+                }
                 return true;
             }
 
@@ -138,15 +158,15 @@ export default {
                 throw new Error('can not get suiMaster');
             }
         },
-        async requestConnectedSuiMaster() {
-            if (this.isSuiMasterConnected()) {
+        async requestConnectedSuiMaster(requireChainName = null) {
+            if (this.isSuiMasterConnected(requireChainName)) {
                 return this.suiMaster;
             }
 
             await this.requestLibs();
             await new Promise((res)=>{ setTimeout(res, 200); }); // let providers check if we are already connected
 
-            if (this.isSuiMasterConnected()) {
+            if (this.isSuiMasterConnected(requireChainName)) {
                 return this.suiMaster;
             }
 
@@ -155,7 +175,7 @@ export default {
                 await this.__connectedSuiMasterPromise;
                 this.isLoading = false;
                 
-                if (this.isSuiMasterConnected()) {
+                if (this.isSuiMasterConnected(requireChainName)) {
                     return this.suiMaster;
                 } else {
                     throw new Error('can not get connection');
@@ -173,7 +193,7 @@ export default {
 
             this.isLoading = false;
 
-            if (this.isSuiMasterConnected()) {
+            if (this.isSuiMasterConnected(requireChainName)) {
                 return this.suiMaster;
             } else {
                 throw new Error('can not get connection');
@@ -207,10 +227,18 @@ export default {
         onConnected() {
             this.showingDialog = false;
 
-            this.connectedAddress = this.$refs.sui.suiInBrowser.connectedAddress;
-            this.connectedChain = this.$refs.sui.suiInBrowser.connectedChain;
+            const connectedChain = this.$refs.sui.suiInBrowser.connectedChain;
 
-            this.$emit('connected');
+            if (!this.defaultChain || this.defaultChain == connectedChain) {
+                this.connectedAddress = this.$refs.sui.suiInBrowser.connectedAddress;
+                this.connectedChain = this.$refs.sui.suiInBrowser.connectedChain;
+
+                this.$emit('connected');
+            } else {
+                this.connectedAddress = null;
+
+                this.$emit('wrongchain', connectedChain);
+            }
         },
         onDisconnected() {
             this.connectedAddress = null;
