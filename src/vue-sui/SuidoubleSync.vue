@@ -51,6 +51,8 @@ export default {
         this.suiInBrowser.addEventListener('adapter', (e)=>{
             this.adapters.push(e.detail);
 
+            console.log(e.detail);
+
             this.$emit('adapters', this.adapters);
         });
         this.suiInBrowser.addEventListener('connected', ()=>{

@@ -1,12 +1,14 @@
 <template>
 
-    <div @click="onClick" v-if="visible">
-		<span v-if="!connectedAddress">Connect with Sui</span>
-		<span v-if="connectedAddress">Connected as {{ displayAddress }} ({{ connectedChain }})</span>
-    </div>
+    <div>
+        <div @click="onClick" v-if="visible">
+            <span v-if="!connectedAddress">Connect with Sui</span>
+            <span v-if="connectedAddress">Connected as {{ displayAddress }} ({{ connectedChain }})</span>
+        </div>
 
-    <SignInWithSuiDialog :showing="showingDialog" @hidden="this.showingDialog = false;" :adapters="adapters" @click="onAdapterClick" />
-    <SuidoubleSync ref="sui" v-if="libsRequested" :defaultChain="defaultChain" @adapters="onSuiAdapters" @suiMaster="onSuiMaster" @loaded="onLibsLoaded" @connected="onConnected" @disconnected="onDisconnected"  />
+        <SignInWithSuiDialog :showing="showingDialog" @hidden="this.showingDialog = false;" :adapters="adapters" @click="onAdapterClick" />
+        <SuidoubleSync ref="sui" v-if="libsRequested" :defaultChain="defaultChain" @adapters="onSuiAdapters" @suiMaster="onSuiMaster" @loaded="onLibsLoaded" @connected="onConnected" @disconnected="onDisconnected"  />
+    </div>
 
 </template>
 
@@ -16,7 +18,7 @@ import SignInWithSuiDialog from './SignInWithSuiDialog.vue';
 
 export default {
 	name: 'SignInWithSui',
-    emits: ['suiMaster', 'disconnected', 'connected', 'wrongchain'],
+    emits: ['suiMaster', 'provider', 'adapter', 'disconnected', 'connected', 'wrongchain'],
 	props: {
         defaultChain: {
             default: 'sui:devnet',
@@ -77,6 +79,15 @@ export default {
 
             if (!this.defaultChain || this.defaultChain == this.suiMaster.connectedChain) {
                 this.$emit('suiMaster', suiMaster);
+
+                suiMaster.getProvider()
+                    .then((provider)=>{
+                        this.$emit('provider', provider);
+
+                        if (suiMaster.signer && suiMaster.signer.activeAdapter) {
+                            this.$emit('adapter', suiMaster.signer.activeAdapter);
+                        }
+                    });
             }
 
             if (this.__suiMasterPromise) {
@@ -233,7 +244,7 @@ export default {
                 this.connectedAddress = this.$refs.sui.suiInBrowser.connectedAddress;
                 this.connectedChain = this.$refs.sui.suiInBrowser.connectedChain;
 
-                this.$emit('connected');
+                this.$emit('connected', this.connectedAddress);
             } else {
                 this.connectedAddress = null;
 

@@ -1,6 +1,6 @@
 <template>
     <div class="signinwithsui_button" @click="this.$refs.signin.onClick();">
-        <SignInWithSui :defaultChain="defaultChain" ref="signin" @wrongchain="onWrongChain" @connected="this.$emit('connected')" @disconnected="this.$emit('disconnected')" @suiMaster="onSuiMaster" />
+        <SignInWithSui :defaultChain="defaultChain" ref="signin" @provider="onProvider" @onAdapter="onAdapter" @wrongchain="onWrongChain" @connected="onConnected" @disconnected="this.$emit('disconnected')" @suiMaster="onSuiMaster" />
     </div>
 </template>
 <style scoped src="./style.css">
@@ -10,7 +10,7 @@ import SignInWithSui from "./SignInWithSui.vue";
 
 export default {
 	name: 'SignInWithSuiButton',
-    emits: ['suiMaster', 'disconnected', 'connected', 'wrongchain'],
+    emits: ['suiMaster', 'provider', 'adapter', 'disconnected', 'connected', 'wrongchain'],
 	props: {
         defaultChain: {
             default: 'sui:devnet',
@@ -27,12 +27,22 @@ export default {
         };
     },
     methods: {
+        onConnected(connectedAddress) {
+            this.connectedAddress = connectedAddress;
+            this.$emit('connected', connectedAddress);
+        },
         onWrongChain(tryingTo) {
             this.$emit('wrongchain', tryingTo);
         },
         onSuiMaster(suiMaster) {
             this.$emit('suiMaster', suiMaster);
-        }
+        },
+        onProvider(provider) {
+            this.$emit('provider', provider);
+        },
+        onAdapter(adapter) {
+            this.$emit('adapter', adapter);
+        },
     },
 };
 </script>

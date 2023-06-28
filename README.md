@@ -41,9 +41,36 @@ import { SignInWithSui } from 'vue-sui';
 
 ### events
 
+Both `SignInWithSui` and `SignInWithSuiButtons` emit very same set of events. Basically SignInWithSuiButtons is just a styled wrapper over SignInWithSui. So feel free to use any.
+
+#### Provider: `provider`
+
+Emits an instance of Sui's [JsonRpcProvider](https://github.com/MystenLabs/sui/tree/main/sdk/typescript/) class connected to the `defaultChain` blockchain. Usually it's emited very soon after SignInWithSui component is mounted (and doesn't require user to connect her/his wallet), and lets you interact with blockchain in read-only way right after the page load:
+
+```javascript
+<SignInWithSui @provider="onProvider" defaultChain="sui:mainnet" />
+
+onProvider = async (provider) => {
+    const data = await provider.getObject({id: '0xcc2bd176a478baea9a0de7a24cd927661cc6e860d5bacecb9a138ef20dbab231'});
+}
+```
+
+#### Adapter: `adapter`
+
+Emits an instance of SuiInBrowserAdapter, which follows the logic of StandartAdapter with functions of `signAndExecuteTransactionBlock`, `signTransactionBlock`, `signMessage`, and `disconnect`. Note that disconnect is not always available (there's no in Sui Wallet) and you may have to ask users to sign off directly in wallet extension.
+
+```javascript
+<SignInWithSuiButton @adapter="onAdapter" defaultChain="sui:mainnet" />
+
+onAdapter = async (adapter) => {
+    const tx = new sui.TransactionBlock();
+    const data = await adapter.signAndExecuteTransactionBlock({transactionBlock: tx});
+}
+```
+
 #### SuiMaster: `suiMaster`
 
-Emited on initialization or when defaultChain parameter changed with instance of of suidouble SuiMaster, to let you interact with blockchain in read-only mode:
+Instance of high-level Sui smart contracts library - [suidouble](https://github.com/suidouble/suidouble) for interaction with smart contracts. Emited on initialization or when defaultChain parameter changed with instance of of suidouble SuiMaster, to let you interact with blockchain in read-only mode:
 
 ```javascript
 <SignInWithSuiButton @suiMaster="onSuiMaster" defaultChain="sui:mainnet" />
