@@ -3,6 +3,10 @@
 		<h1>vue-sui</h1>
 
 		<div>
+			<p>Demo of the <a href="https://github.com/suidouble/vue-sui">vue-sui</a> component. Vue component to connect your dapp to Sui blockchain.</p>
+		</div>
+
+		<div>
 		Connected as: 	<span v-if="!connectedAddress && connectedChain">read-only</span>
 						<span v-if="connectedAddress && connectedChain">{{ connectedAddress }}</span>
 						<br>
@@ -37,6 +41,8 @@
 	</div>
     <div style="float: right; width: 50%; overflow: hidden;">
 		<h3>Events:</h3>
+
+		<p>List of events attached to the very first component (non-styled one)</p>
 
 		<template v-for="(event, index) in events" v-bind:key="index">
 			<div>

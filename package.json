@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/suidouble/vue-sui.git"
   },
-  "version": "0.0.12",
+  "version": "0.0.13",
   "files": [
     "dist/*"
   ],
@@ -15,6 +15,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "release": "npm run build:component && npm publish",
+    "build:demo": "vue-cli-service build --dest ../suidouble.github.io/vue-sui",
     "build:component": "vue-cli-service build --target lib --name vue-sui src/vue-sui/index.js"
   },
   "peerDependencies": {
