@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/suidouble/vue-sui.git"
   },
-  "version": "0.0.38",
+  "version": "0.0.39",
   "files": [
     "dist/*"
   ],
@@ -19,7 +19,7 @@
     "build:component": "vue-cli-service build --target lib --name vue-sui src/vue-sui/index.js"
   },
   "peerDependencies": {
-    "suidouble": "^0.0.38",
+    "suidouble": "^0.0.39",
     "vue": "^3.0.0"
   },
   "keywords": [
@@ -46,7 +46,7 @@
     "eslint-plugin-vue": "^7.0.0",
     "less": "^4.1.2",
     "less-loader": "^6.0.0",
-    "suidouble": "^0.0.38",
+    "suidouble": "^0.0.39",
     "vue": "^3.3.4"
   },
   "eslintConfig": {
