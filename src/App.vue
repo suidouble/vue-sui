@@ -38,6 +38,8 @@
 		<p><a href='#' @click="extra.push(Math.random());">add extra button</a></p>
 
 		<p>Also try to disconnect or switch chain directly from browser extension</p>
+
+		<p>Execute some tx: <button @click="onTx" >Do TX</button></p>
 	</div>
     <div style="float: right; width: 50%; overflow: hidden;">
 		<h3>Events:</h3>
@@ -74,6 +76,8 @@ export default {
 			events: [],
 
 			adapter: null,
+
+			suiMaster: null,
 		};
     },
     methods: {
@@ -90,6 +94,9 @@ export default {
 
             this.connectedAddress = suiMaster.address;
             this.connectedChain = suiMaster.connectedChain;
+
+			this.suiMaster = suiMaster;
+
 			this.tryingTo = null;
         },
 		onConnected() {
@@ -114,7 +121,30 @@ export default {
         },
 		clickDisconnect() {
 			this.adapter.disconnect();
-		},	
+		},
+		async onTx() {
+			const suiCoin = this.suiMaster.suiCoins.get('sui');
+			const txb = new (this.suiMaster.TransactionBlock)();
+			const coinInput = await suiCoin.coinOfAmountToTxCoin(txb, this.suiMaster.address, this.suiMaster.MIST_PER_SUI); // pick 1 SUI
+
+			txb.transferObjects([coinInput], txb.pure(this.suiMaster.address)); // send it to yourself
+
+			const result = await this.suiMaster.signAndExecuteTransactionBlock({
+				transactionBlock: txb,
+				requestType: 'WaitForLocalExecution',
+				options: {
+				},
+			});
+
+
+
+			if (result && result.digest) {
+				alert('tx sent, digest: '+result.digest);
+				// this.events.push({name: 'tx sent', args: [result.digest]});
+			} else {
+				// this.events.push({name: 'tx not sent', args: []});
+			}
+		},
     },
 };
 </script>
