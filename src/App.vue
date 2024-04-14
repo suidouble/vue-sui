@@ -57,6 +57,7 @@
 <script>
 import SignInWithSui from "./vue-sui/SignInWithSui.vue";
 import SignInWithSuiButton from './vue-sui/SignInWithSuiButton.vue';
+
   
 export default {
     components: { 
@@ -97,6 +98,7 @@ export default {
 
 			this.suiMaster = suiMaster;
 
+
 			this.tryingTo = null;
         },
 		onConnected() {
@@ -125,7 +127,7 @@ export default {
 		async onTx() {
 			const suiCoin = this.suiMaster.suiCoins.get('sui');
 			const txb = new (this.suiMaster.TransactionBlock)();
-			const coinInput = await suiCoin.coinOfAmountToTxCoin(txb, this.suiMaster.address, this.suiMaster.MIST_PER_SUI); // pick 1 SUI
+			const coinInput = await suiCoin.coinOfAmountToTxCoin(txb, this.suiMaster.address, '0.01'); // pick 0.01 SUI
 
 			txb.transferObjects([coinInput], txb.pure(this.suiMaster.address)); // send it to yourself
 
