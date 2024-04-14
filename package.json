@@ -19,7 +19,7 @@
     "build:component": "vue-cli-service build --target lib --name vue-sui src/vue-sui/index.js"
   },
   "peerDependencies": {
-    "suidouble": "^0.0.50",
+    "suidouble": "^0.0.51",
     "vue": "^3.0.0"
   },
   "keywords": [
