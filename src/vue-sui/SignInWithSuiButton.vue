@@ -10,7 +10,7 @@ import SignInWithSui from "./SignInWithSui.vue";
 
 export default {
 	name: 'SignInWithSuiButton',
-    emits: ['suiMaster', 'provider', 'adapter', 'disconnected', 'connected', 'wrongchain'],
+    emits: ['suiMaster', 'provider', 'client', 'adapter', 'disconnected', 'connected', 'wrongchain'],
 	props: {
         defaultChain: {
             default: 'sui:devnet',
@@ -38,7 +38,8 @@ export default {
             this.$emit('suiMaster', suiMaster);
         },
         onProvider(provider) {
-            this.$emit('provider', provider);
+            this.$emit('client', provider);
+            this.$emit('provider', provider); // compatible with 0.x versions
         },
         onAdapter(adapter) {
             this.$emit('adapter', adapter);

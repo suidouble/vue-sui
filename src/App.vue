@@ -105,7 +105,7 @@ export default {
 			this.events.push({name: 'connected', args: arguments});
 		},
 		onProvider(provider) {
-			this.events.push({name: 'provider', args: [provider ? 'instance_of_JsonRpcProvider' : null]});
+			this.events.push({name: 'provider', args: [provider ? 'instance_of_SuiClient' : null]});
 		},
 		onAdapter(adapter) {
 			console.error(adapter);
@@ -126,13 +126,13 @@ export default {
 		},
 		async onTx() {
 			const suiCoin = this.suiMaster.suiCoins.get('sui');
-			const txb = new (this.suiMaster.TransactionBlock)();
-			const coinInput = await suiCoin.coinOfAmountToTxCoin(txb, this.suiMaster.address, '0.01'); // pick 0.01 SUI
+			const tx = new (this.suiMaster.Transaction)();
+			const coinInput = await suiCoin.coinOfAmountToTxCoin(tx, this.suiMaster.address, '0.01'); // pick 0.01 SUI
 
-			txb.transferObjects([coinInput], txb.pure(this.suiMaster.address)); // send it to yourself
+			tx.transferObjects([coinInput], tx.pure(this.suiMaster.address)); // send it to yourself
 
-			const result = await this.suiMaster.signAndExecuteTransactionBlock({
-				transactionBlock: txb,
+			const result = await this.suiMaster.signAndExecuteTransaction({
+				transaction: tx,
 				requestType: 'WaitForLocalExecution',
 				options: {
 				},

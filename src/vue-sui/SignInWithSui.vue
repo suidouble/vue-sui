@@ -18,7 +18,7 @@ import SignInWithSuiDialog from './SignInWithSuiDialog.vue';
 
 export default {
 	name: 'SignInWithSui',
-    emits: ['suiMaster', 'provider', 'adapter', 'disconnected', 'connected', 'wrongchain'],
+    emits: ['suiMaster', 'provider', 'client', 'adapter', 'disconnected', 'connected', 'wrongchain'],
 	props: {
         defaultChain: {
             default: 'sui:devnet',
@@ -80,9 +80,10 @@ export default {
             if (!this.defaultChain || this.defaultChain == this.suiMaster.connectedChain) {
                 this.$emit('suiMaster', suiMaster);
 
-                suiMaster.getProvider()
-                    .then((provider)=>{
-                        this.$emit('provider', provider);
+                suiMaster.getClient()
+                    .then((client)=>{
+                        this.$emit('client', client);
+                        this.$emit('provider', client); // compatibility with 0.x versions
 
                         if (suiMaster.signer && suiMaster.signer.activeAdapter) {
                             this.$emit('adapter', suiMaster.signer.activeAdapter);
