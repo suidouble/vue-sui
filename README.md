@@ -47,28 +47,28 @@ import { SignInWithSui } from 'vue-sui';
 
 Both `SignInWithSui` and `SignInWithSuiButtons` emit very same set of events. Basically SignInWithSuiButtons is just a styled wrapper over SignInWithSui. So feel free to use any.
 
-#### Provider: `provider`
+#### Client: `client`
 
-Emits an instance of Sui's [JsonRpcProvider](https://github.com/MystenLabs/sui/tree/main/sdk/typescript/) class connected to the `defaultChain` blockchain. Usually it's emited very soon after SignInWithSui component is mounted (and doesn't require user to connect her/his wallet), and lets you interact with blockchain in read-only way right after the page load:
+Emits an instance of Sui's [SuiClient](https://github.com/MystenLabs/sui/tree/main/sdk/typescript/) class connected to the `defaultChain` blockchain. Usually it's emited very soon after SignInWithSui component is mounted (and doesn't require user to connect her/his wallet), and lets you interact with blockchain in read-only way right after the page load:
 
 ```javascript
-<SignInWithSui @provider="onProvider" defaultChain="sui:mainnet" />
+<SignInWithSui @client="onClient" defaultChain="sui:mainnet" />
 
-onProvider = async (provider) => {
-    const data = await provider.getObject({id: '0xcc2bd176a478baea9a0de7a24cd927661cc6e860d5bacecb9a138ef20dbab231'});
+onClient = async (client) => {
+    const data = await client.getObject({id: '0xcc2bd176a478baea9a0de7a24cd927661cc6e860d5bacecb9a138ef20dbab231'});
 }
 ```
 
 #### Adapter: `adapter`
 
-Emits an instance of SuiInBrowserAdapter, which follows the logic of StandartAdapter with functions of `signAndExecuteTransactionBlock`, `signTransactionBlock`, `signMessage`, and `disconnect`. Note that disconnect is not always available (there's no in Sui Wallet) and you may have to ask users to sign off directly in wallet extension.
+Emits an instance of SuiInBrowserAdapter, which follows the logic of StandartAdapter with functions of `signAndExecuteTransaction`,  `signTransaction`, `signAndExecuteTransactionBlock`, `signTransactionBlock`, `signMessage`, and `disconnect`. Note that disconnect is not always available (there's no in Sui Wallet) and you may have to ask users to sign off directly in wallet extension.
 
 ```javascript
 <SignInWithSuiButton @adapter="onAdapter" defaultChain="sui:mainnet" />
 
 onAdapter = async (adapter) => {
-    const tx = new sui.TransactionBlock();
-    const data = await adapter.signAndExecuteTransactionBlock({transactionBlock: tx});
+    const tx = new sui.Transaction();
+    const data = await adapter.signAndExecuteTransaction({transaction: tx});
 }
 ```
 
@@ -91,7 +91,7 @@ async onSuiMaster(suiMaster) {
 
     const eventsResponse = await module.fetchEvents({eventTypeName: 'ColorCreated', order: 'descending'});
     // if you are connected, you can also execute contract methods:
-    let result = await module.moveCall('mint', ['test', 23]);
+    let result = await module.moveCall('mint', [...]);
     // etc
 }
 ```
@@ -104,7 +104,7 @@ Emited when use allows access to signing txs with her/hist wallet browser extens
 <SignInWithSuiButton @connected="onConnected" />
 
 async onConnected(suiInBrowser) {
-    const provider = await suiInBrowser.getProvider(); // instance of JsonRpcProvider
+    const suiClient = await suiInBrowser.getClient(); // instance of SuiClient
     const suiMaster = await suiInBrowser.getSuiMaster(); // instance of suidouble SuiMaster instance
     const currentChain = suiInBrowser.getCurrentChain(); // chain id, `sui:mainnet`  `sui:testnet` etc
     const connectedAddress = suiInBrowser.getAddress(); // "0x42ff3..."
