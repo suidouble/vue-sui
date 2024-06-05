@@ -516,7 +516,7 @@ eval("const SuiMaster = __webpack_require__(/*! ./lib/SuiMaster.js */ \"./node_m
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("let doExecSync = null;\nlet doSpawn = null;\nlet doFs = null;\nlet doPath = null;\ntry {\n    let { execSync, spawn } = __webpack_require__(Object(function webpackMissingModule() { var e = new Error(\"Cannot find module 'child_process'\"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));\n    doExecSync = execSync;\n    doSpawn = spawn;\n\n    const fs = __webpack_require__(Object(function webpackMissingModule() { var e = new Error(\"Cannot find module 'fs'\"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));\n    const path = __webpack_require__(Object(function webpackMissingModule() { var e = new Error(\"Cannot find module 'path'\"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));\n\n    doFs = fs;\n    doPath = path;\n} catch (e) {\n    console.log('looks we are in browser');\n}\n\nclass SuiCliCommands {\n    static async spawn(command, params = [], envVars = {}) {\n        if (!doSpawn) {\n            throw new Error('can not spawn a proccess in this env');\n        }\n\n        return await new Promise((res,rej)=>{\n            let success = true;\n            let e = null;\n            const proc = doSpawn(command, params, {\n                env: {\n                    ...({\"NODE_ENV\":\"dev\",\"BASE_URL\":\"\"}),\n                    ...envVars,\n                }\n            });\n            proc.on('error', function(err) {\n                success = false;\n                e = err;\n            });\n\n            setTimeout(()=>{\n                if (success) {\n                    res(proc);\n                } else {\n                    rej(e);\n                }\n            }, 100);\n        });\n\n        // const proc = doSpawn(command, [], {\n        //     env: {\n        //         ...process.env,\n        //         ...envVars,\n        //     }\n        // });\n        // proc.on('error', function(err) {\n        //     console.log('Oh noez, teh errurz: ' + err);\n        // });\n\n        // return proc;\n    }\n\n    static async exec(command) {\n        if (!doExecSync) {\n            throw new Error('can not exec a proccess in this env');\n        }\n\n        return doExecSync(\n                command,\n                { encoding: 'utf-8' },\n            );\n    }\n\n    static async getModulesNamesFromPackagePath(path) {\n        if (!doPath || !doFs) {\n            throw new Error('can not access path in this env');\n        }\n\n        try {\n            const buildPathContent = await doFs.promises.readdir(path.join(this._path, 'build'));\n    \n            // @todo: there may be some junk folders and we'd have to get project name from Move.toml ?\n            const buildPath = buildPathContent[0];\n    \n            const dirents = await doFs.promises.readdir(doPath.join(this._path, 'build', buildPath, 'bytecode_modules'), { withFileTypes: true });\n            const names = dirents\n                .filter(dirent => dirent.isFile())\n                .map(dirent => dirent.name.split('.mv').join(''));\n    \n            return names;\n        } catch (e) {\n            throw new Error('can not get modules names from local package path');\n        }\n    }\n}\n\nmodule.exports = SuiCliCommands;\n\n//# sourceURL=webpack://vue-sui/./node_modules/suidouble/lib/SuiCliCommands.js?");
+eval("let doExecSync = null;\nlet doSpawn = null;\nlet doFs = null;\nlet doPath = null;\ntry {\n    let { execSync, spawn } = __webpack_require__(/*! child_process */ \"?3aeb\");\n    doExecSync = execSync;\n    doSpawn = spawn;\n\n    const fs = __webpack_require__(/*! fs */ \"?93c3\");\n    const path = __webpack_require__(/*! path */ \"?58b8\");\n\n    doFs = fs;\n    doPath = path;\n} catch (e) {\n    console.log('looks we are in browser');\n}\n\nclass SuiCliCommands {\n    static async spawn(command, params = [], envVars = {}) {\n        if (!doSpawn) {\n            throw new Error('can not spawn a proccess in this env');\n        }\n\n        return await new Promise((res,rej)=>{\n            let success = true;\n            let e = null;\n            const proc = doSpawn(command, params, {\n                env: {\n                    ...({\"NODE_ENV\":\"dev\",\"BASE_URL\":\"\"}),\n                    ...envVars,\n                }\n            });\n            proc.on('error', function(err) {\n                success = false;\n                e = err;\n            });\n\n            setTimeout(()=>{\n                if (success) {\n                    res(proc);\n                } else {\n                    rej(e);\n                }\n            }, 100);\n        });\n\n        // const proc = doSpawn(command, [], {\n        //     env: {\n        //         ...process.env,\n        //         ...envVars,\n        //     }\n        // });\n        // proc.on('error', function(err) {\n        //     console.log('Oh noez, teh errurz: ' + err);\n        // });\n\n        // return proc;\n    }\n\n    static async exec(command) {\n        if (!doExecSync) {\n            throw new Error('can not exec a proccess in this env');\n        }\n\n        return doExecSync(\n                command,\n                { encoding: 'utf-8' },\n            );\n    }\n\n    static async getModulesNamesFromPackagePath(path) {\n        if (!doPath || !doFs) {\n            throw new Error('can not access path in this env');\n        }\n\n        try {\n            const buildPathContent = await doFs.promises.readdir(path.join(this._path, 'build'));\n    \n            // @todo: there may be some junk folders and we'd have to get project name from Move.toml ?\n            const buildPath = buildPathContent[0];\n    \n            const dirents = await doFs.promises.readdir(doPath.join(this._path, 'build', buildPath, 'bytecode_modules'), { withFileTypes: true });\n            const names = dirents\n                .filter(dirent => dirent.isFile())\n                .map(dirent => dirent.name.split('.mv').join(''));\n    \n            return names;\n        } catch (e) {\n            throw new Error('can not get modules names from local package path');\n        }\n    }\n}\n\nmodule.exports = SuiCliCommands;\n\n//# sourceURL=webpack://vue-sui/./node_modules/suidouble/lib/SuiCliCommands.js?");
 
 /***/ }),
 
@@ -935,6 +935,36 @@ eval("module.exports = __webpack_require__(/*! ../package.json */ \"./node_modul
 
 "use strict";
 module.exports = require("vue");
+
+/***/ }),
+
+/***/ "?3aeb":
+/*!*******************************!*\
+  !*** child_process (ignored) ***!
+  \*******************************/
+/***/ (() => {
+
+eval("/* (ignored) */\n\n//# sourceURL=webpack://vue-sui/child_process_(ignored)?");
+
+/***/ }),
+
+/***/ "?93c3":
+/*!********************!*\
+  !*** fs (ignored) ***!
+  \********************/
+/***/ (() => {
+
+eval("/* (ignored) */\n\n//# sourceURL=webpack://vue-sui/fs_(ignored)?");
+
+/***/ }),
+
+/***/ "?58b8":
+/*!**********************!*\
+  !*** path (ignored) ***!
+  \**********************/
+/***/ (() => {
+
+eval("/* (ignored) */\n\n//# sourceURL=webpack://vue-sui/path_(ignored)?");
 
 /***/ }),
 
