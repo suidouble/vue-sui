@@ -18,7 +18,7 @@
 		<p>With your own button. Note visible=false, you control button title yourself</p>
 		<button @click="this.$refs.sui.onClick();" >
 			Connect 
-			<SignInWithSui ref="sui" :defaultChain="defaultChain" @connected="onConnected" @suiMaster="onSuiMaster" @provider="onProvider" @adapter="onAdapter" @disconnected="onDisconnected" :visible="false"/>
+			<SignInWithSui ref="sui" :defaultChain="defaultChain" @connected="onConnected" @client="onClient" @suiMaster="onSuiMaster" @provider="onProvider" @adapter="onAdapter" @disconnected="onDisconnected" :visible="false"/>
 		</button>
   
 		<p>&nbsp;</p>
@@ -106,6 +106,9 @@ export default {
 		},
 		onProvider(provider) {
 			this.events.push({name: 'provider', args: [provider ? 'instance_of_SuiClient' : null]});
+		},
+		onClient(client) {
+			this.events.push({name: 'client', args: [client ? 'instance_of_SuiClient' : null]});
 		},
 		onAdapter(adapter) {
 			console.error(adapter);
