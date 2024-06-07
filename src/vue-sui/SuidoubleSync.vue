@@ -6,7 +6,7 @@
 
 
 <script>
-const { SuiInBrowser } = require('suidouble');
+import {  SuiInBrowser } from "suidouble";
 
 export default {
 	name: 'SuiSync',
