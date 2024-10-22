@@ -15,6 +15,9 @@ export default {
             default: 'sui:devnet',
             type: String,
         },
+        rpcSettings: {
+            type: Object,
+        },
 	},
 	data() {
 		return {
@@ -33,18 +36,26 @@ export default {
 	watch: {
 	},
 	methods: {
-        async reinitSueMaster() {
+        async reinitSuiMaster() {
             this.suiMaster = await this.suiInBrowser.getSuiMaster();
             if (!this.lastSuiMasterInstanceN || this.lastSuiMasterInstanceN != this.suiMaster.instanceN) {
                 this.$emit('suiMaster', this.suiMaster);
             }
-        }
+        },
+        async setRPC(params = {}) {
+            await this.suiInBrowser.setRPC(params);
+            await this.reinitSuiMaster();
+        },
 	},
 	mounted: function() {
         this.suiInBrowser = SuiInBrowser.getSingleton({
             debug: true,
             defaultChain: this.defaultChain,
         });
+        if (this.rpcSettings) {
+            this.suiInBrowser.setRPC(this.rpcSettings);
+        }
+
         console.log('mounted', this.suiInBrowser._defaultChain);
 
         this.adapters = Object.values(this.suiInBrowser.adapters);
@@ -58,7 +69,7 @@ export default {
         this.suiInBrowser.addEventListener('connected', ()=>{
             this.connectedAddress = this.suiInBrowser.connectedAddress;
             this.connectedChain = this.suiInBrowser.connectedChain;
-            this.reinitSueMaster();
+            this.reinitSuiMaster();
 
             this.$emit('connected', this.suiInBrowser);
         });
@@ -77,12 +88,12 @@ export default {
         if (this.suiInBrowser.isConnected) {
             this.connectedAddress = this.suiInBrowser.connectedAddress;
             this.connectedChain = this.suiInBrowser.connectedChain;
-            this.reinitSueMaster();
+            this.reinitSuiMaster();
 
             this.$emit('connected', this.suiInBrowser);
         }
 
-        this.reinitSueMaster();
+        this.reinitSuiMaster();
 	},
 	computed: {
 	}

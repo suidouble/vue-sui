@@ -1,9 +1,9 @@
 import { SuiInBrowser as S } from "suidouble";
-import { openBlock as o, createElementBlock as a, createElementVNode as d, normalizeClass as m, Fragment as w, renderList as C, toDisplayString as f, createCommentVNode as c, resolveComponent as g, createVNode as M, createBlock as p } from "vue";
+import { openBlock as o, createElementBlock as a, createElementVNode as d, normalizeClass as m, Fragment as w, renderList as C, toDisplayString as f, createCommentVNode as c, resolveComponent as g, createVNode as p, createBlock as M } from "vue";
 import './index.css';const l = (e, i) => {
   const r = e.__vccOpts || e;
-  for (const [u, t] of i)
-    r[u] = t;
+  for (const [u, s] of i)
+    r[u] = s;
   return r;
 }, v = {
   name: "SuiSync",
@@ -11,6 +11,9 @@ import './index.css';const l = (e, i) => {
     defaultChain: {
       default: "sui:devnet",
       type: String
+    },
+    rpcSettings: {
+      type: Object
     }
   },
   data() {
@@ -27,30 +30,33 @@ import './index.css';const l = (e, i) => {
   components: {},
   watch: {},
   methods: {
-    async reinitSueMaster() {
+    async reinitSuiMaster() {
       this.suiMaster = await this.suiInBrowser.getSuiMaster(), (!this.lastSuiMasterInstanceN || this.lastSuiMasterInstanceN != this.suiMaster.instanceN) && this.$emit("suiMaster", this.suiMaster);
+    },
+    async setRPC(e = {}) {
+      await this.suiInBrowser.setRPC(e), await this.reinitSuiMaster();
     }
   },
   mounted: function() {
     this.suiInBrowser = S.getSingleton({
       debug: !0,
       defaultChain: this.defaultChain
-    }), console.log("mounted", this.suiInBrowser._defaultChain), this.adapters = Object.values(this.suiInBrowser.adapters), this.suiInBrowser.addEventListener("adapter", (e) => {
+    }), this.rpcSettings && this.suiInBrowser.setRPC(this.rpcSettings), console.log("mounted", this.suiInBrowser._defaultChain), this.adapters = Object.values(this.suiInBrowser.adapters), this.suiInBrowser.addEventListener("adapter", (e) => {
       this.adapters.push(e.detail), console.log(e.detail), this.$emit("adapters", this.adapters);
     }), this.suiInBrowser.addEventListener("connected", () => {
-      this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSueMaster(), this.$emit("connected", this.suiInBrowser);
+      this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSuiMaster(), this.$emit("connected", this.suiInBrowser);
     }), this.suiInBrowser.addEventListener("disconnected", () => {
       this.connectedAddress = null, this.connectedChain = null, this.$emit("disconnected");
     }), this.$nextTick(() => {
       this.$emit("loaded", this.suiInBrowser), this.$emit("adapters", this.adapters);
-    }), this.suiInBrowser.isConnected && (this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSueMaster(), this.$emit("connected", this.suiInBrowser)), this.reinitSueMaster();
+    }), this.suiInBrowser.isConnected && (this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSuiMaster(), this.$emit("connected", this.suiInBrowser)), this.reinitSuiMaster();
   },
   computed: {}
 };
-function A(e, i, r, u, t, s) {
+function A(e, i, r, u, s, t) {
   return o(), a("div");
 }
-const b = /* @__PURE__ */ l(v, [["render", A]]), I = {
+const y = /* @__PURE__ */ l(v, [["render", A]]), I = {
   name: "SignInWithSuiDialog",
   emits: ["click", "hidden"],
   props: {
@@ -100,37 +106,37 @@ const b = /* @__PURE__ */ l(v, [["render", A]]), I = {
   },
   mounted: async function() {
   }
-}, k = {
+}, b = {
   key: 0,
   class: "signinwithsui_dialog"
-}, y = { class: "signinwithsui_dialog_inner_card" }, P = { class: "signinwithsui_dialog_list" }, B = ["onClick"], $ = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_icon" }, L = ["src"], D = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_name" };
-function R(e, i, r, u, t, s) {
-  return t.isActive ? (o(), a("div", k, [
+}, P = { class: "signinwithsui_dialog_inner_card" }, k = { class: "signinwithsui_dialog_list" }, B = ["onClick"], L = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_icon" }, $ = ["src"], R = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_name" };
+function D(e, i, r, u, s, t) {
+  return s.isActive ? (o(), a("div", b, [
     d("div", {
       class: "signinwithsui_dialog_backdrop",
-      onClick: i[0] || (i[0] = (...n) => s.onBackdrop && s.onBackdrop(...n))
+      onClick: i[0] || (i[0] = (...n) => t.onBackdrop && t.onBackdrop(...n))
     }),
     d("div", {
-      class: m(["signinwithsui_dialog_inner", { signinwithsui_dialog_inner_active: t.isVisible }])
+      class: m(["signinwithsui_dialog_inner", { signinwithsui_dialog_inner_active: s.isVisible }])
     }, [
-      d("div", y, [
-        d("div", P, [
+      d("div", P, [
+        d("div", k, [
           (o(!0), a(w, null, C(r.adapters, (n, h) => (o(), a(w, { key: h }, [
             n.isDefault || n.okForSui ? (o(), a("div", {
               key: 0,
               class: m(["signinwithsui_dialog_item", { signinwithsui_dialog_item_disabled: n.isDefault }]),
-              onClick: (_) => s.onAdapterClick(n)
+              onClick: (_) => t.onAdapterClick(n)
             }, [
-              d("div", $, [
+              d("div", L, [
                 d("img", {
                   loading: "lazy",
                   fetchpriority: "auto",
                   "aria-hidden": "true",
                   draggable: "false",
                   src: n.icon
-                }, null, 8, L)
+                }, null, 8, $)
               ]),
-              d("div", D, f(n.name), 1)
+              d("div", R, f(n.name), 1)
             ], 10, B)) : c("", !0)
           ], 64))), 128))
         ])
@@ -138,7 +144,7 @@ function R(e, i, r, u, t, s) {
     ], 2)
   ])) : c("", !0);
 }
-const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]), q = {
+const W = /* @__PURE__ */ l(I, [["render", D], ["__scopeId", "data-v-5933915b"]]), q = {
   name: "SignInWithSui",
   emits: ["suiMaster", "provider", "client", "adapter", "disconnected", "connected", "wrongchain"],
   props: {
@@ -146,12 +152,19 @@ const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]
       default: "sui:devnet",
       type: String
     },
+    rpcSettings: {
+      type: Object
+    },
     auto: {
-      default: !1,
+      default: !0,
       type: Boolean
     },
     visible: {
       default: !0,
+      type: Boolean
+    },
+    persist: {
+      default: !1,
       type: Boolean
     }
   },
@@ -164,6 +177,7 @@ const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]
       connectedChain: null,
       forceChainCalculated: null,
       suiMaster: null,
+      activeAdapter: null,
       showingDialog: !1
     };
   },
@@ -178,7 +192,7 @@ const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]
     }
   },
   components: {
-    SuidoubleSync: b,
+    SuidoubleSync: y,
     SignInWithSuiDialog: W
   },
   methods: {
@@ -188,7 +202,7 @@ const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]
      */
     onSuiMaster(e) {
       this.suiMaster = e, (!this.defaultChain || this.defaultChain == this.suiMaster.connectedChain) && (this.$emit("suiMaster", e), e.getClient().then((i) => {
-        this.$emit("client", i), this.$emit("provider", i), e.signer && e.signer.activeAdapter && this.$emit("adapter", e.signer.activeAdapter);
+        this.$emit("client", i), this.$emit("provider", i), e.signer && e.signer.activeAdapter && (this.$emit("adapter", e.signer.activeAdapter), this.activeAdapter = e.signer.activeAdapter);
       })), this.__suiMasterPromise && this.suiMaster && (this.__suiMasterPromiseResolver(), this.__suiMasterPromise = null), this.__connectedSuiMasterPromise && this.isSuiMasterConnected() && (this.__connectedSuiMasterPromiseResolver(), this.__connectedSuiMasterPromise = null);
     },
     onSuiAdapters(e) {
@@ -200,7 +214,10 @@ const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]
     async onAdapterClick(e) {
       if (this.showingDialog = !1, e.isDefault && !e.isInstalled)
         return window.open(e.getDownloadURL(), "_blank"), !1;
-      this.isLoading = !0, await this.$refs.sui.suiInBrowser.connect(e), this.isLoading = !1;
+      this.isLoading = !0, await this.$refs.sui.suiInBrowser.connect(e), this.persist && window.localStorage.setItem("vue-sui-preferred-adapter", e.name), this.isLoading = !1;
+    },
+    async setRPC(e = {}) {
+      this.$refs.sui.setRPC(e);
     },
     async requestSuiMaster() {
       if (this.suiMaster)
@@ -244,7 +261,14 @@ const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]
       }), this.connectedAddress || (this.showingDialog = !0), this.isLoading = !1;
     },
     async initialize() {
-      this.auto && (this.isLoading = !0, await this.requestLibs(), this.isLoading = !1);
+      if (this.auto && (this.isLoading = !0, await this.requestLibs(), this.isLoading = !1), await new Promise((e) => {
+        setTimeout(e, 200);
+      }), this.persist) {
+        const e = window.localStorage.getItem("vue-sui-preferred-adapter");
+        e && this.adapters.forEach((i) => {
+          console.log(i.okForSui, i.name), i.name && i.okForSui && i.name == e && this.onAdapterClick(i);
+        });
+      }
     },
     async requestLibs() {
       this.libsRequested = !0, await this.__libsRequestedPromise;
@@ -259,6 +283,15 @@ const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]
     },
     onDisconnected() {
       this.connectedAddress = null, this.$emit("disconnected");
+    },
+    async disconnect() {
+      window.localStorage.setItem("vue-sui-preferred-adapter", null);
+      try {
+        await this.activeAdapter.disconnect();
+      } catch (e) {
+        return console.error(e), window.location.reload(), !1;
+      }
+      return !0;
     }
   },
   beforeMount: function() {
@@ -269,38 +302,39 @@ const W = /* @__PURE__ */ l(I, [["render", R], ["__scopeId", "data-v-5933915b"]]
   mounted: async function() {
     this.initialize();
   }
-}, E = { key: 0 }, x = { key: 1 };
-function T(e, i, r, u, t, s) {
+}, E = { key: 0 }, T = { key: 1 };
+function x(e, i, r, u, s, t) {
   const n = g("SignInWithSuiDialog"), h = g("SuidoubleSync");
   return o(), a("div", null, [
     r.visible ? (o(), a("div", {
       key: 0,
-      onClick: i[0] || (i[0] = (..._) => s.onClick && s.onClick(..._))
+      onClick: i[0] || (i[0] = (..._) => t.onClick && t.onClick(..._))
     }, [
-      t.connectedAddress ? c("", !0) : (o(), a("span", E, "Connect with Sui")),
-      t.connectedAddress ? (o(), a("span", x, "Connected as " + f(s.displayAddress) + " (" + f(t.connectedChain) + ")", 1)) : c("", !0)
+      s.connectedAddress ? c("", !0) : (o(), a("span", E, "Connect with Sui")),
+      s.connectedAddress ? (o(), a("span", T, "Connected as " + f(t.displayAddress) + " (" + f(s.connectedChain) + ")", 1)) : c("", !0)
     ])) : c("", !0),
-    M(n, {
-      showing: t.showingDialog,
+    p(n, {
+      showing: s.showingDialog,
       onHidden: i[1] || (i[1] = (_) => {
         this.showingDialog = !1;
       }),
-      adapters: t.adapters,
-      onClick: s.onAdapterClick
+      adapters: s.adapters,
+      onClick: t.onAdapterClick
     }, null, 8, ["showing", "adapters", "onClick"]),
-    t.libsRequested ? (o(), p(h, {
+    s.libsRequested ? (o(), M(h, {
       key: 1,
       ref: "sui",
+      rpcSettings: r.rpcSettings,
       defaultChain: r.defaultChain,
-      onAdapters: s.onSuiAdapters,
-      onSuiMaster: s.onSuiMaster,
-      onLoaded: s.onLibsLoaded,
-      onConnected: s.onConnected,
-      onDisconnected: s.onDisconnected
-    }, null, 8, ["defaultChain", "onAdapters", "onSuiMaster", "onLoaded", "onConnected", "onDisconnected"])) : c("", !0)
+      onAdapters: t.onSuiAdapters,
+      onSuiMaster: t.onSuiMaster,
+      onLoaded: t.onLibsLoaded,
+      onConnected: t.onConnected,
+      onDisconnected: t.onDisconnected
+    }, null, 8, ["rpcSettings", "defaultChain", "onAdapters", "onSuiMaster", "onLoaded", "onConnected", "onDisconnected"])) : c("", !0)
   ]);
 }
-const V = /* @__PURE__ */ l(q, [["render", T]]), z = {
+const V = /* @__PURE__ */ l(q, [["render", x]]), O = {
   name: "SignInWithSuiButton",
   emits: ["suiMaster", "provider", "client", "adapter", "disconnected", "connected", "wrongchain"],
   props: {
@@ -322,6 +356,9 @@ const V = /* @__PURE__ */ l(q, [["render", T]]), z = {
     onConnected(e) {
       this.connectedAddress = e, this.$emit("connected", e);
     },
+    onDisconnected() {
+      this.connectedAddress = null, this.$emit("disconnected");
+    },
     onWrongChain(e) {
       this.$emit("wrongchain", e);
     },
@@ -336,27 +373,27 @@ const V = /* @__PURE__ */ l(q, [["render", T]]), z = {
     }
   }
 };
-function O(e, i, r, u, t, s) {
+function z(e, i, r, u, s, t) {
   const n = g("SignInWithSui");
   return o(), a("div", {
     class: "signinwithsui_button",
-    onClick: i[1] || (i[1] = (h) => {
+    onClick: i[0] || (i[0] = (h) => {
       this.$refs.signin.onClick();
     })
   }, [
-    M(n, {
+    p(n, {
       defaultChain: r.defaultChain,
       ref: "signin",
-      onProvider: s.onProvider,
-      onOnAdapter: s.onAdapter,
-      onWrongchain: s.onWrongChain,
-      onConnected: s.onConnected,
-      onDisconnected: i[0] || (i[0] = (h) => this.$emit("disconnected")),
-      onSuiMaster: s.onSuiMaster
-    }, null, 8, ["defaultChain", "onProvider", "onOnAdapter", "onWrongchain", "onConnected", "onSuiMaster"])
+      onProvider: t.onProvider,
+      onOnAdapter: t.onAdapter,
+      onWrongchain: t.onWrongChain,
+      onConnected: t.onConnected,
+      onDisconnected: t.onDisconnected,
+      onSuiMaster: t.onSuiMaster
+    }, null, 8, ["defaultChain", "onProvider", "onOnAdapter", "onWrongchain", "onConnected", "onDisconnected", "onSuiMaster"])
   ]);
 }
-const H = /* @__PURE__ */ l(z, [["render", O], ["__scopeId", "data-v-b96de773"]]);
+const H = /* @__PURE__ */ l(O, [["render", z], ["__scopeId", "data-v-9f95f778"]]);
 export {
   V as SignInWithSui,
   H as SignInWithSuiButton

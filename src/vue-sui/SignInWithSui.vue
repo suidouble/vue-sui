@@ -7,7 +7,7 @@
         </div>
 
         <SignInWithSuiDialog :showing="showingDialog" @hidden="this.showingDialog = false;" :adapters="adapters" @click="onAdapterClick" />
-        <SuidoubleSync ref="sui" v-if="libsRequested" :defaultChain="defaultChain" @adapters="onSuiAdapters" @suiMaster="onSuiMaster" @loaded="onLibsLoaded" @connected="onConnected" @disconnected="onDisconnected"  />
+        <SuidoubleSync ref="sui" v-if="libsRequested" :rpcSettings="rpcSettings" :defaultChain="defaultChain" @adapters="onSuiAdapters" @suiMaster="onSuiMaster" @loaded="onLibsLoaded" @connected="onConnected" @disconnected="onDisconnected"  />
     </div>
 
 </template>
@@ -24,12 +24,19 @@ export default {
             default: 'sui:devnet',
             type: String,
         },
+        rpcSettings: {
+            type: Object,
+        },
         auto: {
-            default: false,
+            default: true,
             type: Boolean,
         },
         visible: {
             default: true,
+            type: Boolean,
+        },
+        persist: {
+            default: false,
             type: Boolean,
         },
 	},
@@ -44,6 +51,7 @@ export default {
 
             forceChainCalculated: null,
             suiMaster: null,
+            activeAdapter: null,
 
             showingDialog: false,
 		}
@@ -87,6 +95,7 @@ export default {
 
                         if (suiMaster.signer && suiMaster.signer.activeAdapter) {
                             this.$emit('adapter', suiMaster.signer.activeAdapter);
+                            this.activeAdapter = suiMaster.signer.activeAdapter;
                         }
                     });
             }
@@ -133,7 +142,15 @@ export default {
 
             this.isLoading = true;
             await this.$refs.sui.suiInBrowser.connect(adapter);
+
+            if (this.persist) {
+                window.localStorage.setItem('vue-sui-preferred-adapter', adapter.name);
+            }
+
             this.isLoading = false;
+        },
+        async setRPC(params = {}) {
+            this.$refs.sui.setRPC(params);
         },
         async requestSuiMaster() {
             if (this.suiMaster) {
@@ -228,6 +245,20 @@ export default {
                 await this.requestLibs();
                 this.isLoading = false;
             }
+
+            await new Promise((res)=>{ setTimeout(res, 200); }); // let providers check if we are already connected
+
+            if (this.persist) {
+                const preferredAdapter = window.localStorage.getItem('vue-sui-preferred-adapter');
+                if (preferredAdapter) {
+                    this.adapters.forEach(element => {
+                        console.log(element.okForSui, element.name);
+                        if (element.name && element.okForSui && element.name == preferredAdapter) {
+                            this.onAdapterClick(element);
+                        }
+                    });
+                }
+            }
 		},
         async requestLibs() {
             this.libsRequested = true;
@@ -256,6 +287,17 @@ export default {
             this.connectedAddress = null;
 
             this.$emit('disconnected');
+        },
+        async disconnect() {
+            window.localStorage.setItem('vue-sui-preferred-adapter', null);
+            try { 
+                await this.activeAdapter.disconnect(); // (may not be available in some wallets)
+            } catch (e) {
+                console.error(e);
+                window.location.reload();
+                return false;
+            }
+            return true;
         },
 	},
 	beforeMount: function() {

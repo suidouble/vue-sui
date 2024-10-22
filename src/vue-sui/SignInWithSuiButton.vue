@@ -1,6 +1,6 @@
 <template>
     <div class="signinwithsui_button" @click="this.$refs.signin.onClick();">
-        <SignInWithSui :defaultChain="defaultChain" ref="signin" @provider="onProvider" @onAdapter="onAdapter" @wrongchain="onWrongChain" @connected="onConnected" @disconnected="this.$emit('disconnected')" @suiMaster="onSuiMaster" />
+        <SignInWithSui :defaultChain="defaultChain" ref="signin" @provider="onProvider" @onAdapter="onAdapter" @wrongchain="onWrongChain" @connected="onConnected" @disconnected="onDisconnected" @suiMaster="onSuiMaster" />
     </div>
 </template>
 <style scoped src="./style.css">
@@ -30,6 +30,10 @@ export default {
         onConnected(connectedAddress) {
             this.connectedAddress = connectedAddress;
             this.$emit('connected', connectedAddress);
+        },
+        onDisconnected() {
+            this.connectedAddress = null;
+            this.$emit('disconnected');
         },
         onWrongChain(tryingTo) {
             this.$emit('wrongchain', tryingTo);

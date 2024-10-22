@@ -1,57 +1,104 @@
 <template>
-    <div style="float: left; width: 50%; overflow: hidden;">
+	<div>
+		<div style="display: block; padding: 12px; background: #abc4ff;; color: #2A66F3; text-align: right;">
+			<button @click="this.$refs.sui.onClick();" style="background-color: #2A66F3; color: #edf2fb; border: 0; padding: 8px;">
+				<span v-if="!connectedAddress">Connect</span> 
+				<span v-if="connectedAddress">{{ displayAddress }}</span> 
+				<SignInWithSui ref="sui" :defaultChain="defaultChain" :persist="true" @connected="onConnected" @client="onClient" @suiMaster="onSuiMaster" @provider="onProvider" @adapter="onAdapter" @disconnected="onDisconnected" :visible="false"/>
+			</button>
+			<button v-if="connectedAddress" @click="this.$refs.sui.disconnect();" style="background-color: #2A66F3; color: #edf2fb; border: 0; padding: 8px;">
+				Disconnect
+			</button>
+		</div>
+	</div>
+	<div style="padding: 12px;">
+
+		<div style="float: left; width: 50%; overflow: hidden;">
 		<h1>vue-sui</h1>
+
 
 		<div>
 			<p>Demo of the <a href="https://github.com/suidouble/vue-sui">vue-sui</a> component. Vue component to connect your dapp to Sui blockchain.</p>
 		</div>
 
-		<div>
-		Connected as: 	<span v-if="!connectedAddress && connectedChain">read-only</span>
-						<span v-if="connectedAddress && connectedChain">{{ connectedAddress }}</span>
-						<br>
-		Connected to: {{ connectedChain }}<br>
-		
-		<span v-if="tryingTo">Was trying to connect to {{ tryingTo }}, but expected to {{ defaultChain }} (ask user to switch chain in wallet extension settings or reinitialize/redirect to different chain dapp/sub-dapp)</span>
-		</div>
+		<p>All styles are managed by you, the SignInWithSui component itself is invisible.</p>
+
+		<p><code>
+			&lt;SignInWithSui ref="sui" :defaultChain="defaultChain" :persist="true" @connected="onConnected" @client="onClient" @suiMaster="onSuiMaster" :visible="false" &gt;
+		</code></p>
   
-		<p>With your own button. Note visible=false, you control button title yourself</p>
-		<button @click="this.$refs.sui.onClick();" >
-			Connect 
-			<SignInWithSui ref="sui" :defaultChain="defaultChain" @connected="onConnected" @client="onClient" @suiMaster="onSuiMaster" @provider="onProvider" @adapter="onAdapter" @disconnected="onDisconnected" :visible="false"/>
-		</button>
+		<p>Request the component to display a wallet extension selection popup and prompt the user to connect their wallet:</p>
+
+		<p><code>
+			this.$refs.sui.onClick();
+		</code></p>
+
+		<p>Listen to component events of:</p>
+
+		<p><b>@client</b> to get an instance of sui sdk's <a href="https://github.com/MystenLabs/sui/blob/main/sdk/typescript/src/client/client.ts" target="_blank">SuiClient</a></p>
+		<p><b>@suiMaster</b> to get an instance of suidouble <a href="https://github.com/suidouble/suidouble" target="_blank">SuiMaster</a></p>
+		<p><b>@connected</b> when user wallet is connected, you also get additional suiMaster event with connected SuiMaster</p>
+		<p><b>@adapter</b> to get an instance of <a href="https://github.com/suidouble/suidouble/blob/main/lib/SuiInBrowserAdapter.js">SuiInBrowserAdapter</a> in case you want to sign txs without SuiMaster</p>
+		<p><b>@wrongchain</b> to catch the case when you expect user to be connected to specific chain, like 'mainnet', but she has different one selected in the wallet</p>
+
   
 		<p>&nbsp;</p>
 
-		<p>Pre-defined styling:</p>
+		<p>Or use SignInWithSuiButton with pre-defined styling:</p>
+
+		<p><code>
+			&lt;SignInWithSuiButton :defaultChain="defaultChain" @wrongchain="onWrongChain" /&gt;
+		</code></p>
 
 		<SignInWithSuiButton :defaultChain="defaultChain" @wrongchain="onWrongChain" />
-
-		<p>switch `defaultChain` component prop to: <a href="#" @click="defaultChain = 'sui:mainnet';">sui:mainnet</a> <a href="#" @click="defaultChain = 'sui:devnet';">sui:devnet</a></p>
 
 		<li v-for="item in extra" :key="item">
 			<SignInWithSuiButton :defaultChain="defaultChain" />
 		</li>
 
-		<p v-if="adapter"><a href="#" @click="clickDisconnect">disconnect</a> (may not be available in some wallets)</p>
+		<p v-if="adapter"><a href="#" @click="$refs.sui.disconnect();">disconnect</a> ( with some wallets (Suiet) it's instant, with some (Sui Wallet) - it clears connection and refreshes the page)</p>
 
-		<p><a href='#' @click="extra.push(Math.random());">add extra button</a></p>
 
 		<p>Also try to disconnect or switch chain directly from browser extension</p>
 
-		<p>Execute some tx: <button @click="onTx" >Do TX</button></p>
+		<p>&nbsp;</p>
+
 	</div>
-    <div style="float: right; width: 50%; overflow: hidden;">
-		<h3>Events:</h3>
+    <div style="float: right; width: 50%; overflow: hidden; padding-top: 12px;">
+		<div>
+			<p>switch `defaultChain` component prop to: <a href="#" @click="defaultChain = 'sui:mainnet';">sui:mainnet</a> <a href="#" @click="defaultChain = 'sui:devnet';">sui:devnet</a> <a href="#" @click="defaultChain = 'sui:testnet';">sui:testnet</a></p>
 
-		<p>List of events attached to the very first component (non-styled one)</p>
+			<table>
+				<tr><td>Connected as</td><td>
+					<span v-if="!connectedAddress && connectedChain">read-only</span>
+					<span v-if="connectedAddress && connectedChain">{{ connectedAddress }} <button @click="onTx" >Do Sample TX</button></span>
+				</td></tr>
+				<tr><td>Connected to</td><td>
+					{{ connectedChain }}
+				</td></tr>
+				<tr><td>defaultChain</td><td>
+					{{ defaultChain }}
+				</td></tr>
+			</table>
+		
+		<span v-if="tryingTo">Was trying to connect to {{ tryingTo }}, but expected to {{ defaultChain }} (ask user to switch chain in wallet extension settings or reinitialize/redirect to different chain dapp/sub-dapp)</span>
+		</div>
 
+		<h3>Events</h3>
+
+		<p>List of events from SignInWithSui `.$refs.sui` component</p>
+
+		<table>
 		<template v-for="(event, index) in events" v-bind:key="index">
-			<div>
-				<strong>name:</strong> {{ event.name }} <strong>details:</strong> {{ JSON.stringify(event.args) }}
-			</div>
+			<tr>
+				<td><b>{{ event.name }}</b></td><td>{{ JSON.stringify(event.args) }}</td>
+			</tr>
 		</template>
+		</table>
 	</div>
+
+	</div>
+
 </template>
   
 <script>
@@ -67,6 +114,7 @@ export default {
     data() {
 		return {
 			connectedAddress: null,
+			displayAddress: null,
 			connectedChain: null,
 
 			defaultChain: 'sui:mainnet',
@@ -82,6 +130,14 @@ export default {
 		};
     },
     methods: {
+		onRPCClick() {
+			this.$refs.sui.setRPC({
+					url: 'https://sui-mainnet-endpoint.blockvision.org',
+					rpc: {
+						// headers: {"x-allthatnode-api-key": "xxxxxxxxxx"},
+					},
+				});
+		},
 		onWrongChain(tryingTo) {
 			this.events.push({name: 'wrongchain', args: arguments});
 
@@ -94,6 +150,7 @@ export default {
 			this.events.push({name: 'suiMaster', args: [suiMaster ? 'instance_of_SuiMaster' : null]});
 
             this.connectedAddress = suiMaster.address;
+			this.displayAddress = this.$refs.sui.displayAddress;
             this.connectedChain = suiMaster.connectedChain;
 
 			this.suiMaster = suiMaster;
@@ -124,30 +181,32 @@ export default {
             // this.connectedChain = null; // provider is still available, read-only mode
 			this.tryingTo = null;
         },
-		clickDisconnect() {
-			this.adapter.disconnect();
-		},
+		// clickDisconnect() {
+		// 	this.adapter.disconnect();
+		// },
 		async onTx() {
+			try {
 			const suiCoin = this.suiMaster.suiCoins.get('sui');
 			const tx = new (this.suiMaster.Transaction)();
 			const coinInput = await suiCoin.coinOfAmountToTxCoin(tx, this.suiMaster.address, '0.01'); // pick 0.01 SUI
 
-			tx.transferObjects([coinInput], tx.pure(this.suiMaster.address)); // send it to yourself
+			tx.transferObjects([coinInput], this.suiMaster.address); // send it to yourself
 
-			const result = await this.suiMaster.signAndExecuteTransaction({
-				transaction: tx,
-				requestType: 'WaitForLocalExecution',
-				options: {
-				},
-			});
+				const result = await this.suiMaster.signAndExecuteTransaction({
+					transaction: tx,
+					requestType: 'WaitForLocalExecution',
+					options: {
+					},
+				});
 
-
-
-			if (result && result.digest) {
-				alert('tx sent, digest: '+result.digest);
-				// this.events.push({name: 'tx sent', args: [result.digest]});
-			} else {
-				// this.events.push({name: 'tx not sent', args: []});
+				if (result && result.digest) {
+					alert('tx sent, digest: '+result.digest);
+					// this.events.push({name: 'tx sent', args: [result.digest]});
+				} else {
+					// this.events.push({name: 'tx not sent', args: []});
+				}
+			} catch (e) {
+				alert(e);
 			}
 		},
     },
@@ -159,6 +218,13 @@ export default {
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		color: #2c3e50;
-		margin-top: 60px;
+		margin-top: 0px;
+	}
+
+	code {
+		background: white;
+		display: block;
+		padding: 8px;
+		margin-right: 12px;
 	}
 </style>
