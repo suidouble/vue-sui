@@ -56,13 +56,9 @@ export default {
             this.suiInBrowser.setRPC(this.rpcSettings);
         }
 
-        console.log('mounted', this.suiInBrowser._defaultChain);
-
         this.adapters = Object.values(this.suiInBrowser.adapters);
         this.suiInBrowser.addEventListener('adapter', (e)=>{
             this.adapters.push(e.detail);
-
-            console.log(e.detail);
 
             this.$emit('adapters', this.adapters);
         });

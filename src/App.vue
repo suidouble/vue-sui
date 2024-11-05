@@ -1,71 +1,37 @@
 <template>
 	<div>
-		<div style="display: block; padding: 12px; background: #abc4ff;; color: #2A66F3; text-align: right;">
-			<button @click="this.$refs.sui.onClick();" style="background-color: #2A66F3; color: #edf2fb; border: 0; padding: 8px;">
+		<div style="display: block; padding: 12px; background: #abc4ff; color: #2A66F3; text-align: right;">
+			<button @click="this.$refs.sui.onClick();">
 				<span v-if="!connectedAddress">Connect</span> 
-				<span v-if="connectedAddress">{{ displayAddress }}</span> 
-				<SignInWithSui ref="sui" :defaultChain="defaultChain" :persist="true" @connected="onConnected" @client="onClient" @suiMaster="onSuiMaster" @provider="onProvider" @adapter="onAdapter" @disconnected="onDisconnected" :visible="false"/>
+				<span v-if="connectedAddress" :title="connectedAddress">{{ displayAddress }}</span> 
+				<SignInWithSui ref="sui" 
+					:defaultChain="defaultChain" 
+					:persist="true" 
+					@connected="onConnected" 
+					@client="onClient" 
+					@suiMaster="onSuiMaster" 
+					@provider="onProvider" 
+					@adapter="onAdapter" 
+					@disconnected="onDisconnected"
+					@displayAddress="onDisplayAddress"
+					:visible="false"
+					/>
 			</button>
-			<button v-if="connectedAddress" @click="this.$refs.sui.disconnect();" style="background-color: #2A66F3; color: #edf2fb; border: 0; padding: 8px;">
+			<button v-if="connectedAddress" @click="this.$refs.sui.disconnect();">
 				Disconnect
 			</button>
 		</div>
 	</div>
+
 	<div style="padding: 12px;">
+		<div class="docs_column">
+			
+			<h1>vue-sui</h1>
 
-		<div style="float: left; width: 50%; overflow: hidden;">
-		<h1>vue-sui</h1>
-
-
-		<div>
-			<p>Demo of the <a href="https://github.com/suidouble/vue-sui">vue-sui</a> component. Vue component to connect your dapp to Sui blockchain.</p>
 		</div>
+		<div class="docs_column">
 
-		<p>All styles are managed by you, the SignInWithSui component itself is invisible.</p>
-
-		<p><code>
-			&lt;SignInWithSui ref="sui" :defaultChain="defaultChain" :persist="true" @connected="onConnected" @client="onClient" @suiMaster="onSuiMaster" :visible="false" &gt;
-		</code></p>
-  
-		<p>Request the component to display a wallet extension selection popup and prompt the user to connect their wallet:</p>
-
-		<p><code>
-			this.$refs.sui.onClick();
-		</code></p>
-
-		<p>Listen to component events of:</p>
-
-		<p><b>@client</b> to get an instance of sui sdk's <a href="https://github.com/MystenLabs/sui/blob/main/sdk/typescript/src/client/client.ts" target="_blank">SuiClient</a></p>
-		<p><b>@suiMaster</b> to get an instance of suidouble <a href="https://github.com/suidouble/suidouble" target="_blank">SuiMaster</a></p>
-		<p><b>@connected</b> when user wallet is connected, you also get additional suiMaster event with connected SuiMaster</p>
-		<p><b>@adapter</b> to get an instance of <a href="https://github.com/suidouble/suidouble/blob/main/lib/SuiInBrowserAdapter.js">SuiInBrowserAdapter</a> in case you want to sign txs without SuiMaster</p>
-		<p><b>@wrongchain</b> to catch the case when you expect user to be connected to specific chain, like 'mainnet', but she has different one selected in the wallet</p>
-
-  
-		<p>&nbsp;</p>
-
-		<p>Or use SignInWithSuiButton with pre-defined styling:</p>
-
-		<p><code>
-			&lt;SignInWithSuiButton :defaultChain="defaultChain" @wrongchain="onWrongChain" /&gt;
-		</code></p>
-
-		<SignInWithSuiButton :defaultChain="defaultChain" @wrongchain="onWrongChain" />
-
-		<li v-for="item in extra" :key="item">
-			<SignInWithSuiButton :defaultChain="defaultChain" />
-		</li>
-
-		<p v-if="adapter"><a href="#" @click="$refs.sui.disconnect();">disconnect</a> ( with some wallets (Suiet) it's instant, with some (Sui Wallet) - it clears connection and refreshes the page)</p>
-
-
-		<p>Also try to disconnect or switch chain directly from browser extension</p>
-
-		<p>&nbsp;</p>
-
-	</div>
-    <div style="float: right; width: 50%; overflow: hidden; padding-top: 12px;">
-		<div>
+			<div>
 			<p>switch `defaultChain` component prop to: <a href="#" @click="defaultChain = 'sui:mainnet';">sui:mainnet</a> <a href="#" @click="defaultChain = 'sui:devnet';">sui:devnet</a> <a href="#" @click="defaultChain = 'sui:testnet';">sui:testnet</a></p>
 
 			<table>
@@ -81,8 +47,96 @@
 				</td></tr>
 			</table>
 		
-		<span v-if="tryingTo">Was trying to connect to {{ tryingTo }}, but expected to {{ defaultChain }} (ask user to switch chain in wallet extension settings or reinitialize/redirect to different chain dapp/sub-dapp)</span>
+			<span v-if="tryingTo">Was trying to connect to {{ tryingTo }}, but expected to {{ defaultChain }} (ask user to switch chain in wallet extension settings or reinitialize/redirect to different chain dapp/sub-dapp)</span>
+			</div>
+
 		</div>
+	</div>
+
+
+	<div style="padding: 12px;">
+
+		<div class="docs_column">
+
+
+		<div>
+			<p>Demo of the <a href="https://github.com/suidouble/vue-sui">vue-sui</a> component. Vue component to connect your dapp to Sui blockchain.</p>
+		</div>
+
+		<p>All styles on pages are managed by you, the SignInWithSui component itself is invisible until popup is requested.</p>
+
+		<pre><code class="language-javascript">
+import { SignInWithSui } from 'vue-sui';
+
+&lt;SignInWithSui 
+	ref="sui"
+	:defaultChain="defaultChain" 
+	:persist="true" 
+	@connected="onConnected" 
+	@client="onClient" 
+	@suiMaster="onSuiMaster" 
+	@wrongchain="onWrongChain"
+	@displayAddress="onDisplayAddress"
+	:visible="false" 
+	:persist="true" 
+	&gt;
+		</code></pre>
+  
+		<p>Listen to component events of:</p>
+
+		<p><b>@client</b> to get an instance of sui sdk's <a href="https://github.com/MystenLabs/sui/blob/main/sdk/typescript/src/client/client.ts" target="_blank">SuiClient</a></p>
+		<p><b>@suiMaster</b> to get an instance of suidouble <a href="https://github.com/suidouble/suidouble" target="_blank">SuiMaster</a></p>
+		<p><b>@connected</b> when user wallet is connected, you also get additional suiMaster event with connected SuiMaster</p>
+		<p><b>@adapter</b> to get an instance of <a href="https://github.com/suidouble/suidouble/blob/main/lib/SuiInBrowserAdapter.js">SuiInBrowserAdapter</a> connected with user's wallet in case you want to sign txs without SuiMaster</p>
+		<p><b>@displayAddress</b> when displayAddress is updated. May be a short wallet address, like "0x2636...9f78" or SuiNS name, if resolved for the connected wallet</p>
+		<p><b>@wrongchain</b> to catch the case when you expect user to be connected to specific chain, like 'mainnet'(defaultChain == 'sui:mainnet'), but user has different one selected in the wallet</p>
+
+  
+		<p>&nbsp;</p>
+
+		<p>Or use SignInWithSuiButton with pre-defined styling:</p>
+
+		<pre><code class="language-javascript">
+import { SignInWithSuiButton } from 'vue-sui';
+
+&lt;SignInWithSuiButton :defaultChain="defaultChain" :persist="true" /&gt;
+		</code></pre>
+
+		<SignInWithSuiButton :defaultChain="defaultChain" @wrongchain="onWrongChain" />
+
+		<p>SignInWithSuiButton emits the same set of events as underlying SignInWithSui component</p>
+
+		<li v-for="item in extra" :key="item">
+			<SignInWithSuiButton :defaultChain="defaultChain" />
+		</li>
+
+		<p v-if="adapter"><a href="#" @click="$refs.sui.disconnect();">disconnect</a> ( with some wallets (Suiet) it's instant, with some (Sui Wallet) - it clears connection and refreshes the page)</p>
+
+
+		<p>Also try to disconnect or switch chain directly from browser extension, vue-sui will cover this events and update component state on the fly.</p>
+
+		<p>&nbsp;</p>
+
+	</div>
+    <div class="docs_column">
+
+		<p>Request the component to display a wallet extension selection popup and prompt the user to connect their wallet:</p>
+
+		<pre><code  class="language-javascript">
+this.$refs.sui.connect();
+		</code></pre>
+
+		<p>
+			<button @click="this.$refs.sui.connect();">Run this.$refs.sui.connect()</button></p>
+
+		<p>To disconnect from the wallet:</p>
+
+<pre><code  class="language-javascript">
+this.$refs.sui.disconnect();
+	</code></pre>
+
+<p>
+	<button @click="this.$refs.sui.disconnect();">Run this.$refs.sui.disconnect()</button></p>
 
 		<h3>Events</h3>
 
@@ -129,7 +183,17 @@ export default {
 			suiMaster: null,
 		};
     },
+	mounted() {
+		setTimeout(()=>{
+			hljs.highlightAll();
+		}, 50);
+	},
     methods: {
+		onDisplayAddress(displayAddress) {
+			this.events.unshift({name: 'displayAddress', args: [displayAddress]});
+
+			this.displayAddress = displayAddress;
+		},
 		onRPCClick() {
 			this.$refs.sui.setRPC({
 					url: 'https://sui-mainnet-endpoint.blockvision.org',
@@ -139,7 +203,7 @@ export default {
 				});
 		},
 		onWrongChain(tryingTo) {
-			this.events.push({name: 'wrongchain', args: arguments});
+			this.events.unshift({name: 'wrongchain', args: arguments});
 
 			this.connectedAddress = null;
 			this.connectedChain = null;
@@ -147,34 +211,31 @@ export default {
 			this.tryingTo = tryingTo;
 		},
         onSuiMaster(suiMaster) {
-			this.events.push({name: 'suiMaster', args: [suiMaster ? 'instance_of_SuiMaster' : null]});
+			this.events.unshift({name: 'suiMaster', args: [suiMaster ? 'instance_of_SuiMaster ('+(suiMaster.address ? ('wallet='+suiMaster.address) : 'readonly')+')' : null]});
 
             this.connectedAddress = suiMaster.address;
-			this.displayAddress = this.$refs.sui.displayAddress;
             this.connectedChain = suiMaster.connectedChain;
 
 			this.suiMaster = suiMaster;
 
-
 			this.tryingTo = null;
         },
 		onConnected() {
-			this.events.push({name: 'connected', args: arguments});
+			this.events.unshift({name: 'connected', args: arguments});
 		},
 		onProvider(provider) {
-			this.events.push({name: 'provider', args: [provider ? 'instance_of_SuiClient' : null]});
+			this.events.unshift({name: 'provider', args: [provider ? 'instance_of_SuiClient' : null]});
 		},
 		onClient(client) {
-			this.events.push({name: 'client', args: [client ? 'instance_of_SuiClient' : null]});
+			this.events.unshift({name: 'client', args: [client ? 'instance_of_SuiClient' : null]});
 		},
 		onAdapter(adapter) {
-			console.error(adapter);
-			this.events.push({name: 'adapter', args: [adapter ? 'instance_of_SuiInBrowserAdapter' : null]});
+			this.events.unshift({name: 'adapter', args: [adapter ? 'instance_of_SuiInBrowserAdapter (name='+adapter.name+')' : null]});
 
 			this.adapter = adapter;
 		},
         onDisconnected() {
-			this.events.push({name: 'disconnected', args: arguments});
+			this.events.unshift({name: 'disconnected', args: arguments});
 
             this.connectedAddress = null;
 
@@ -219,6 +280,32 @@ export default {
 		-moz-osx-font-smoothing: grayscale;
 		color: #2c3e50;
 		margin-top: 0px;
+	}
+
+	#app a {
+		color: rgb(42, 102, 243);
+	}
+
+	#app button {
+		background-color: #2A66F3; 
+		color: #edf2fb; 
+		border: 0; 
+		padding: 8px;
+	}
+
+	#app .docs_column {
+		float: left;
+		width: 50%;
+		overflow: hidden;
+	}
+
+	@media (max-width: 1250px) {
+		#app .docs_column {
+			float: none;
+			width: 100%;
+			overflow: hidden;
+		}
+
 	}
 
 	code {

@@ -18,5 +18,14 @@
     <div id="app"></div>
     <script type="module" src="main.js"></script>
     <!-- built files will be auto injected -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/dark.min.css">
+<script type="module">
+import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/es/highlight.min.js';
+//  and it's easy to individually load additional languages
+import javascript from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/es/languages/javascript.min.js';
+hljs.registerLanguage('javascript', javascript);
+window.hljs = hljs;
+  </script>
   </body>
 </html>

@@ -3,7 +3,7 @@
     <div>
         <div @click="onClick" v-if="visible">
             <span v-if="!connectedAddress">Connect with Sui</span>
-            <span v-if="connectedAddress">Connected as {{ displayAddress }} ({{ connectedChain }})</span>
+            <span v-if="connectedAddress">{{ displayAddress }}</span>
         </div>
 
         <SignInWithSuiDialog :showing="showingDialog" @hidden="this.showingDialog = false;" :adapters="adapters" @click="onAdapterClick" />
@@ -18,7 +18,7 @@ import SignInWithSuiDialog from './SignInWithSuiDialog.vue';
 
 export default {
 	name: 'SignInWithSui',
-    emits: ['suiMaster', 'provider', 'client', 'adapter', 'disconnected', 'connected', 'wrongchain'],
+    emits: ['suiMaster', 'provider', 'client', 'adapter', 'disconnected', 'connected', 'wrongchain', 'displayAddress'],
 	props: {
         defaultChain: {
             default: 'sui:devnet',
@@ -46,7 +46,11 @@ export default {
             libsRequested: true,
 
             adapters: [],
+            
             connectedAddress: null,
+            displayAddress: null,
+            resolvedNameServiceName: null,
+
             connectedChain: null,
 
             forceChainCalculated: null,
@@ -62,22 +66,57 @@ export default {
             this.connectedAddress = null;
             this.connectedChain = null;
             this.suiMaster = null;
-            console.error('switched');
+            // console.error('switched');
             this.libsRequested = false;
             await new Promise((res)=>setTimeout(res, 50));
             this.libsRequested = true;
         },
 	},
 	computed: {
-		displayAddress() {
-			return (''+this.connectedAddress).substr(0,6)+'...'+(''+this.connectedAddress).substr(-4);
-		},
 	},
 	components: {
         SuidoubleSync,
         SignInWithSuiDialog,
 	},
 	methods: {
+        checkDisplayAddress() {
+            let updated = this.displayAddress;
+            if (!this.connectedAddress) {
+                updated = null;
+            } else if (this.connectedAddress) {
+                if (this.resolvedNameServiceName) {
+                    updated = this.resolvedNameServiceName;
+                } else {
+                    updated = (''+this.connectedAddress).substr(0,6)+'...'+(''+this.connectedAddress).substr(-4);
+                }
+            }
+
+            if (this.displayAddress != updated) {
+                this.displayAddress = updated;
+                this.$emit('displayAddress', this.displayAddress);
+            }
+        },
+        async getNameServiceName() {
+            // alert('getNameServiceName'+this.suiMaster.address);
+            if (this.suiMaster && this.suiMaster.address) {
+                const cacheKey = 'resolvedNameServiceName_'+this.suiMaster.connectedChain+':'+this.suiMaster.address;
+                const cacheTTL = 10 * 60 * 1000; // 10 minutes
+                const cached = this.getCache(cacheKey);
+
+                if (cached !== undefined) {
+                    this.resolvedNameServiceName = cached;
+                } else {
+                    const name = await this.suiMaster.resolveNameServiceName();
+                    this.resolvedNameServiceName = name;
+                    this.setCache(cacheKey, name, cacheTTL);
+                }
+
+                this.checkDisplayAddress();
+            } else {
+                this.resolvedNameServiceName = null;
+                this.checkDisplayAddress();
+            }
+        },
         /**
          * SuiMaster instance updated
          * @param {SuiMaster} suiMaster 
@@ -98,6 +137,8 @@ export default {
                             this.activeAdapter = suiMaster.signer.activeAdapter;
                         }
                     });
+
+                this.getNameServiceName(); // also check the NS
             }
 
             if (this.__suiMasterPromise) {
@@ -228,6 +269,9 @@ export default {
                 throw new Error('can not get connection');
             }
         },
+        async connect() {
+            return await this.onClick();
+        },
         async onClick() {
             this.isLoading = true;
             await this.requestLibs();
@@ -252,7 +296,7 @@ export default {
                 const preferredAdapter = window.localStorage.getItem('vue-sui-preferred-adapter');
                 if (preferredAdapter) {
                     this.adapters.forEach(element => {
-                        console.log(element.okForSui, element.name);
+                        // console.log(element.okForSui, element.name);
                         if (element.name && element.okForSui && element.name == preferredAdapter) {
                             this.onAdapterClick(element);
                         }
@@ -277,16 +321,20 @@ export default {
                 this.connectedChain = this.$refs.sui.suiInBrowser.connectedChain;
 
                 this.$emit('connected', this.connectedAddress);
+                this.checkDisplayAddress();
             } else {
                 this.connectedAddress = null;
 
                 this.$emit('wrongchain', connectedChain);
+                this.checkDisplayAddress();
             }
         },
         onDisconnected() {
             this.connectedAddress = null;
 
             this.$emit('disconnected');
+
+            this.checkDisplayAddress();
         },
         async disconnect() {
             window.localStorage.setItem('vue-sui-preferred-adapter', null);
@@ -298,6 +346,31 @@ export default {
                 return false;
             }
             return true;
+        },
+        setCache(key, value, ttl) {
+            const now = new Date();
+            const item = {
+                value: value,
+                expiry: now.getTime() + ttl,
+            };
+            window.localStorage.setItem(key, JSON.stringify(item));
+        },
+        getCache(key) {
+            try {
+                const itemStr = window.localStorage.getItem(key);
+                if (!itemStr) {
+                    return undefined;
+                }
+                const item = JSON.parse(itemStr);
+                const now = new Date();
+                if (now.getTime() > item.expiry) {
+                    window.localStorage.removeItem(key);
+                    return undefined;
+                }
+                return item.value;
+            } catch (e) {
+                return undefined;
+            }
         },
 	},
 	beforeMount: function() {

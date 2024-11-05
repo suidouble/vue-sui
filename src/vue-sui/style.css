@@ -1,21 +1,40 @@
 .signinwithsui_button {
 	/* box-shadow:inset 0px -3px 7px 0px #29bbff; */
-	background:linear-gradient(to bottom, #3898ec 5%, #4ca3ff 100%);
-	border-radius:3px;
+	/* background:linear-gradient(to bottom, #3898ec 5%, #4ca3ff 100%); */
+    
+    /* background: linear-gradient(#95c5ee,#4ca3ff);   */
+    background: linear-gradient(#3b9ff7,#1a4e85);  
+
+	border-radius: 2px;
 	display:inline-block;
 	cursor:pointer;
 	color:#ffffff;
 	font-family:Arial;
 	font-size:15px;
-	padding:9px 23px;
+	padding:8px 16px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #263666;
-    transition: background 1s ease-out;  
     user-select: none;
     margin: 0;
+
+
+    background-size: 1px 200px;  
+    cursor:pointer;  
+
+    transition: background 0.2s ease-out;  
 }
+
+.signinwithsui_button .signinwithsui_button_inner {
+	display:inline-block;
+}
+
+.signinwithsui_button .signinwithsui_button_inner:nth-child(2) {
+    padding-left: 16px;
+}
+
 .signinwithsui_button:hover {
-	background:linear-gradient(to bottom, #4ca3ff 5%, #3898ec 100%);
+    background-position:100px;  
+	/* background:linear-gradient(to bottom, #4ca3ff 5%, #3898ec 100%); */
 }
 
 .signinwithsui_dialog {

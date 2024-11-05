@@ -1,6 +1,9 @@
 <template>
-    <div class="signinwithsui_button" @click="this.$refs.signin.onClick();">
-        <SignInWithSui :defaultChain="defaultChain" ref="signin" @provider="onProvider" @onAdapter="onAdapter" @wrongchain="onWrongChain" @connected="onConnected" @disconnected="onDisconnected" @suiMaster="onSuiMaster" />
+    <div class="signinwithsui_button"  @click="onClick">
+        <div class="signinwithsui_button_inner">
+            <SignInWithSui :defaultChain="defaultChain" :persist="persist" ref="signin" @provider="onProvider" @onAdapter="onAdapter" @wrongchain="onWrongChain" @connected="onConnected" @disconnected="onDisconnected" @suiMaster="onSuiMaster" @displayAddress="onDisplayAddress" />
+        </div>
+        <div class="signinwithsui_button_inner" v-if="connectedAddress">disconnect</div>
     </div>
 </template>
 <style scoped src="./style.css">
@@ -10,11 +13,15 @@ import SignInWithSui from "./SignInWithSui.vue";
 
 export default {
 	name: 'SignInWithSuiButton',
-    emits: ['suiMaster', 'provider', 'client', 'adapter', 'disconnected', 'connected', 'wrongchain'],
+    emits: ['suiMaster', 'provider', 'client', 'adapter', 'disconnected', 'connected', 'wrongchain', 'displayAddress'],
 	props: {
         defaultChain: {
             default: 'sui:devnet',
             type: String,
+        },
+        persist: {
+            default: false,
+            type: Boolean,
         },
     },
     components: { 
@@ -24,9 +31,22 @@ export default {
         return {
             connectedAddress: null,
             connectedChain: null,
+
+			displayAddress: null,
         };
     },
     methods: {
+        onClick() {
+            if (!this.connectedAddress) {
+                this.$refs.signin.connect();
+            } else {
+                this.$refs.signin.disconnect();
+            }
+        },
+		onDisplayAddress(displayAddress) {
+			this.displayAddress = displayAddress;
+            this.$emit('displayAddress', displayAddress);
+		},
         onConnected(connectedAddress) {
             this.connectedAddress = connectedAddress;
             this.$emit('connected', connectedAddress);
