@@ -1,10 +1,15 @@
 <template>
 	<div>
 		<div style="display: block; padding: 12px; background: #abc4ff; color: #2A66F3; text-align: right;">
-			<button @click="this.$refs.sui.onClick();">
+			<div style="float: left; line-height: 32px; vertical-align: middle;">
+				<h3 style="margin: 0; padding: 0;">vue-sui</h3>
+			</div>
+
+			<button @click="this.$refs.sui.connect();">
 				<span v-if="!connectedAddress">Connect</span> 
 				<span v-if="connectedAddress" :title="connectedAddress">{{ displayAddress }}</span> 
-				<SignInWithSui ref="sui" 
+				<SignInWithSui 
+					ref="sui" 
 					:defaultChain="defaultChain" 
 					:persist="true" 
 					@connected="onConnected" 
@@ -26,28 +31,29 @@
 	<div style="padding: 12px;">
 		<div class="docs_column">
 			
-			<h1>vue-sui</h1>
+			<p>switch `defaultChain` component prop to: <a href="#" @click="defaultChain = 'sui:mainnet';">sui:mainnet</a> <a href="#" @click="defaultChain = 'sui:devnet';">sui:devnet</a> <a href="#" @click="defaultChain = 'sui:testnet';">sui:testnet</a></p>
+
 
 		</div>
 		<div class="docs_column">
 
-			<div>
-			<p>switch `defaultChain` component prop to: <a href="#" @click="defaultChain = 'sui:mainnet';">sui:mainnet</a> <a href="#" @click="defaultChain = 'sui:devnet';">sui:devnet</a> <a href="#" @click="defaultChain = 'sui:testnet';">sui:testnet</a></p>
+			<div class="docs_column_right">
 
-			<table>
-				<tr><td>Connected as</td><td>
-					<span v-if="!connectedAddress && connectedChain">read-only</span>
-					<span v-if="connectedAddress && connectedChain">{{ connectedAddress }} <button @click="onTx" >Do Sample TX</button></span>
-				</td></tr>
-				<tr><td>Connected to</td><td>
-					{{ connectedChain }}
-				</td></tr>
-				<tr><td>defaultChain</td><td>
-					{{ defaultChain }}
-				</td></tr>
-			</table>
-		
-			<span v-if="tryingTo">Was trying to connect to {{ tryingTo }}, but expected to {{ defaultChain }} (ask user to switch chain in wallet extension settings or reinitialize/redirect to different chain dapp/sub-dapp)</span>
+				<table>
+					<tr><td>Connected as</td><td>
+						<span v-if="!connectedAddress && connectedChain">read-only</span>
+						<span v-if="connectedAddress && connectedChain">{{ connectedAddress }} <button @click="onTx" >Do Sample TX</button></span>
+					</td></tr>
+					<tr><td>Connected to</td><td>
+						{{ connectedChain }}
+					</td></tr>
+					<tr><td>defaultChain</td><td>
+						{{ defaultChain }}
+					</td></tr>
+				</table>
+			
+				<span v-if="tryingTo">Was trying to connect to {{ tryingTo }}, but expected to {{ defaultChain }} (ask user to switch chain in wallet extension settings or reinitialize/redirect to different chain dapp/sub-dapp)</span>
+			
 			</div>
 
 		</div>
@@ -63,7 +69,8 @@
 			<p>Demo of the <a href="https://github.com/suidouble/vue-sui">vue-sui</a> component. Vue component to connect your dapp to Sui blockchain.</p>
 		</div>
 
-		<p>All styles on pages are managed by you, the SignInWithSui component itself is invisible until popup is requested.</p>
+		<p><b>Option 1:</b> All styles on pages are managed by you, the SignInWithSui component itself is invisible until popup is requested.</p>
+		<p>Take a look at <a href="https://github.com/suidouble/vue-sui/blob/main/src/App.vue">this app code</a> to check this option implementation.</p>
 
 		<pre><code class="language-javascript">
 import { SignInWithSui } from 'vue-sui';
@@ -94,7 +101,7 @@ import { SignInWithSui } from 'vue-sui';
   
 		<p>&nbsp;</p>
 
-		<p>Or use SignInWithSuiButton with pre-defined styling:</p>
+		<p><b>Option 2:</b> Or use SignInWithSuiButton with pre-defined styling:</p>
 
 		<pre><code class="language-javascript">
 import { SignInWithSuiButton } from 'vue-sui';
@@ -118,37 +125,43 @@ import { SignInWithSuiButton } from 'vue-sui';
 		<p>&nbsp;</p>
 
 	</div>
-    <div class="docs_column">
+	<div class="docs_column">
 
-		<p>Request the component to display a wallet extension selection popup and prompt the user to connect their wallet:</p>
+		<div class="docs_column_right">
 
-		<pre><code  class="language-javascript">
+
+			<p>Request the component to display a wallet extension selection popup and prompt the user to connect their wallet:</p>
+
+			<pre><code  class="language-javascript">
 this.$refs.sui.connect();
+			</code></pre>
+
+			<p>
+				<button @click="this.$refs.sui.connect();">Execute this.$refs.sui.connect()</button></p>
+
+			<p>To disconnect from the wallet:</p>
+
+	<pre><code  class="language-javascript">
+this.$refs.sui.disconnect();
 		</code></pre>
 
-		<p>
-			<button @click="this.$refs.sui.connect();">Run this.$refs.sui.connect()</button></p>
+	<p>
+		<button @click="this.$refs.sui.disconnect();">Execute this.$refs.sui.disconnect()</button></p>
 
-		<p>To disconnect from the wallet:</p>
+			<h3>Events</h3>
 
-<pre><code  class="language-javascript">
-this.$refs.sui.disconnect();
-	</code></pre>
+			<p>List of events from SignInWithSui `.$refs.sui` component</p>
 
-<p>
-	<button @click="this.$refs.sui.disconnect();">Run this.$refs.sui.disconnect()</button></p>
+			<table>
+			<template v-for="(event, index) in events" v-bind:key="index">
+				<tr>
+					<td><b>{{ event.name }}</b></td><td>{{ JSON.stringify(event.args) }}</td>
+				</tr>
+			</template>
+			</table>
 
-		<h3>Events</h3>
 
-		<p>List of events from SignInWithSui `.$refs.sui` component</p>
-
-		<table>
-		<template v-for="(event, index) in events" v-bind:key="index">
-			<tr>
-				<td><b>{{ event.name }}</b></td><td>{{ JSON.stringify(event.args) }}</td>
-			</tr>
-		</template>
-		</table>
+		</div>
 	</div>
 
 	</div>
@@ -161,11 +174,11 @@ import SignInWithSuiButton from './vue-sui/SignInWithSuiButton.vue';
 
   
 export default {
-    components: { 
+	components: { 
 		SignInWithSui,
 		SignInWithSuiButton,
-    },
-    data() {
+	},
+	data() {
 		return {
 			connectedAddress: null,
 			displayAddress: null,
@@ -182,13 +195,13 @@ export default {
 
 			suiMaster: null,
 		};
-    },
+	},
 	mounted() {
 		setTimeout(()=>{
 			hljs.highlightAll();
 		}, 50);
 	},
-    methods: {
+	methods: {
 		onDisplayAddress(displayAddress) {
 			this.events.unshift({name: 'displayAddress', args: [displayAddress]});
 
@@ -210,16 +223,16 @@ export default {
 
 			this.tryingTo = tryingTo;
 		},
-        onSuiMaster(suiMaster) {
+		onSuiMaster(suiMaster) {
 			this.events.unshift({name: 'suiMaster', args: [suiMaster ? 'instance_of_SuiMaster ('+(suiMaster.address ? ('wallet='+suiMaster.address) : 'readonly')+')' : null]});
 
-            this.connectedAddress = suiMaster.address;
-            this.connectedChain = suiMaster.connectedChain;
+			this.connectedAddress = suiMaster.address;
+			this.connectedChain = suiMaster.connectedChain;
 
 			this.suiMaster = suiMaster;
 
 			this.tryingTo = null;
-        },
+		},
 		onConnected() {
 			this.events.unshift({name: 'connected', args: arguments});
 		},
@@ -234,24 +247,20 @@ export default {
 
 			this.adapter = adapter;
 		},
-        onDisconnected() {
+		onDisconnected() {
 			this.events.unshift({name: 'disconnected', args: arguments});
 
-            this.connectedAddress = null;
+			this.connectedAddress = null;
 
-            // this.connectedChain = null; // provider is still available, read-only mode
 			this.tryingTo = null;
-        },
-		// clickDisconnect() {
-		// 	this.adapter.disconnect();
-		// },
+		},
 		async onTx() {
 			try {
-			const suiCoin = this.suiMaster.suiCoins.get('sui');
-			const tx = new (this.suiMaster.Transaction)();
-			const coinInput = await suiCoin.coinOfAmountToTxCoin(tx, this.suiMaster.address, '0.01'); // pick 0.01 SUI
+				const suiCoin = this.suiMaster.suiCoins.get('sui');
+				const tx = new (this.suiMaster.Transaction)();
+				const coinInput = await suiCoin.coinOfAmountToTxCoin(tx, this.suiMaster.address, '0.01'); // pick 0.01 SUI
 
-			tx.transferObjects([coinInput], this.suiMaster.address); // send it to yourself
+				tx.transferObjects([coinInput], this.suiMaster.address); // send it to yourself
 
 				const result = await this.suiMaster.signAndExecuteTransaction({
 					transaction: tx,
@@ -270,7 +279,7 @@ export default {
 				alert(e);
 			}
 		},
-    },
+	},
 };
 </script>
 <style>
@@ -297,6 +306,10 @@ export default {
 		float: left;
 		width: 50%;
 		overflow: hidden;
+	}
+
+	#app .docs_column_right {
+		padding-left: 8px;
 	}
 
 	@media (max-width: 1250px) {
