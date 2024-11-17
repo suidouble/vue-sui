@@ -25,7 +25,7 @@
     "prepublishOnly": "npm run buildcomponent"
   },
   "peerDependencies": {
-    "suidouble": "^1.14.3-1",
+    "suidouble": "^1.14.3-2",
     "vue": "^3.0.0"
   },
   "keywords": [
@@ -43,11 +43,11 @@
   "author": "suidouble (https://github.com/suidouble)",
   "license": "MIT",
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.5",
-    "suidouble": "1.14.3-1",
-    "vite": "^5.2.12",
+    "@vitejs/plugin-vue": "^5.2.0",
+    "suidouble": "1.14.3-2",
+    "vite": "^5.4.11",
     "vite-plugin-lib-inject-css": "^2.1.1",
-    "vue": "^3.3.4"
+    "vue": "^3.5.13"
   },
   "sideEffects": [
     "**/*.css"
