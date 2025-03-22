@@ -1,5 +1,5 @@
 import { SuiInBrowser as S } from "suidouble";
-import { openBlock as o, createElementBlock as a, createElementVNode as c, normalizeClass as _, Fragment as g, renderList as v, toDisplayString as w, createCommentVNode as u, resolveComponent as f, createVNode as p, createBlock as C } from "vue";
+import { createElementBlock as a, openBlock as o, createCommentVNode as u, createElementVNode as c, normalizeClass as _, Fragment as g, renderList as v, toDisplayString as w, resolveComponent as f, createVNode as p, createBlock as C } from "vue";
 import './index.css';const l = (e, s) => {
   const t = e.__vccOpts || e;
   for (const [d, n] of s)
