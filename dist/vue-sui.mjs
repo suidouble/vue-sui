@@ -42,7 +42,7 @@ import './index.css';const l = (e, s) => {
       debug: !0,
       defaultChain: this.defaultChain
     }), this.rpcSettings && this.suiInBrowser.setRPC(this.rpcSettings), this.adapters = Object.values(this.suiInBrowser.adapters), this.suiInBrowser.addEventListener("adapter", (e) => {
-      this.adapters.push(e.detail), this.$emit("adapters", this.adapters);
+      console.log("New adapter", e.detail), this.adapters.push(e.detail), this.$emit("adapters", this.adapters);
     }), this.suiInBrowser.addEventListener("connected", () => {
       this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSuiMaster(), this.$emit("connected", this.suiInBrowser);
     }), this.suiInBrowser.addEventListener("disconnected", () => {
@@ -99,19 +99,19 @@ const y = /* @__PURE__ */ l(M, [["render", A]]), k = {
       }, 300);
     },
     onBackdrop() {
-      this.hide();
+      this.hide(), console.log(this.adapters);
     }
   },
   beforeMount: function() {
   },
   mounted: async function() {
   }
-}, I = {
+}, b = {
   key: 0,
   class: "signinwithsui_dialog"
-}, b = { class: "signinwithsui_dialog_inner_card" }, P = { class: "signinwithsui_dialog_list" }, D = ["onClick"], B = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_icon" }, L = ["src"], $ = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_name" };
+}, I = { class: "signinwithsui_dialog_inner_card" }, P = { class: "signinwithsui_dialog_list" }, D = ["onClick"], B = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_icon" }, L = ["src"], $ = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_name" };
 function R(e, s, t, d, n, i) {
-  return n.isActive ? (o(), a("div", I, [
+  return n.isActive ? (o(), a("div", b, [
     c("div", {
       class: "signinwithsui_dialog_backdrop",
       onClick: s[0] || (s[0] = (...r) => i.onBackdrop && i.onBackdrop(...r))
@@ -119,10 +119,10 @@ function R(e, s, t, d, n, i) {
     c("div", {
       class: _(["signinwithsui_dialog_inner", { signinwithsui_dialog_inner_active: n.isVisible }])
     }, [
-      c("div", b, [
+      c("div", I, [
         c("div", P, [
           (o(!0), a(g, null, v(t.adapters, (r, h) => (o(), a(g, { key: h }, [
-            r.isDefault || r.okForSui ? (o(), a("div", {
+            r && r.name && (r.isDefault || r.okForSui) ? (o(), a("div", {
               key: 0,
               class: _(["signinwithsui_dialog_item", { signinwithsui_dialog_item_disabled: r.isDefault }]),
               onClick: (m) => i.onAdapterClick(r)
@@ -144,7 +144,7 @@ function R(e, s, t, d, n, i) {
     ], 2)
   ])) : u("", !0);
 }
-const N = /* @__PURE__ */ l(k, [["render", R], ["__scopeId", "data-v-5933915b"]]), W = {
+const N = /* @__PURE__ */ l(k, [["render", R], ["__scopeId", "data-v-7fbb2031"]]), W = {
   name: "SignInWithSui",
   emits: ["suiMaster", "provider", "client", "adapter", "disconnected", "connected", "wrongchain", "displayAddress"],
   props: {

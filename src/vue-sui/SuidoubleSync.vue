@@ -58,6 +58,7 @@ export default {
 
         this.adapters = Object.values(this.suiInBrowser.adapters);
         this.suiInBrowser.addEventListener('adapter', (e)=>{
+            console.log('New adapter', e.detail);
             this.adapters.push(e.detail);
 
             this.$emit('adapters', this.adapters);
