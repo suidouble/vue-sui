@@ -42,7 +42,7 @@ import './index.css';const l = (e, s) => {
       debug: !0,
       defaultChain: this.defaultChain
     }), this.rpcSettings && this.suiInBrowser.setRPC(this.rpcSettings), this.adapters = Object.values(this.suiInBrowser.adapters), this.suiInBrowser.addEventListener("adapter", (e) => {
-      console.log("New adapter", e.detail), this.adapters.push(e.detail), this.$emit("adapters", this.adapters);
+      this.adapters.push(e.detail), this.$emit("adapters", this.adapters);
     }), this.suiInBrowser.addEventListener("connected", () => {
       this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSuiMaster(), this.$emit("connected", this.suiInBrowser);
     }), this.suiInBrowser.addEventListener("disconnected", () => {
