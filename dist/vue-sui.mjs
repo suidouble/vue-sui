@@ -1,11 +1,11 @@
-import { SuiInBrowser as S } from "suidouble";
-import { createElementBlock as a, openBlock as o, createCommentVNode as u, createElementVNode as c, normalizeClass as _, Fragment as g, renderList as v, toDisplayString as w, resolveComponent as f, createVNode as p, createBlock as C } from "vue";
+import { SuiInBrowser as v } from "suidouble";
+import { createElementBlock as a, openBlock as o, createCommentVNode as u, createElementVNode as c, normalizeClass as _, Fragment as g, renderList as C, toDisplayString as p, resolveComponent as f, createBlock as w, Teleport as M, createVNode as S } from "vue";
 import './index.css';const l = (e, s) => {
   const t = e.__vccOpts || e;
   for (const [d, n] of s)
     t[d] = n;
   return t;
-}, M = {
+}, A = {
   name: "SuiSync",
   props: {
     defaultChain: {
@@ -38,7 +38,7 @@ import './index.css';const l = (e, s) => {
     }
   },
   mounted: function() {
-    this.suiInBrowser = S.getSingleton({
+    this.suiInBrowser = v.getSingleton({
       debug: !0,
       defaultChain: this.defaultChain
     }), this.rpcSettings && this.suiInBrowser.setRPC(this.rpcSettings), this.adapters = Object.values(this.suiInBrowser.adapters), this.suiInBrowser.addEventListener("adapter", (e) => {
@@ -53,10 +53,10 @@ import './index.css';const l = (e, s) => {
   },
   computed: {}
 };
-function A(e, s, t, d, n, i) {
+function y(e, s, t, d, n, i) {
   return o(), a("div");
 }
-const y = /* @__PURE__ */ l(M, [["render", A]]), k = {
+const k = /* @__PURE__ */ l(A, [["render", y]]), b = {
   name: "SignInWithSuiDialog",
   emits: ["click", "hidden"],
   props: {
@@ -106,12 +106,12 @@ const y = /* @__PURE__ */ l(M, [["render", A]]), k = {
   },
   mounted: async function() {
   }
-}, b = {
+}, I = {
   key: 0,
   class: "signinwithsui_dialog"
-}, I = { class: "signinwithsui_dialog_inner_card" }, P = { class: "signinwithsui_dialog_list" }, D = ["onClick"], B = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_icon" }, L = ["src"], $ = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_name" };
-function R(e, s, t, d, n, i) {
-  return n.isActive ? (o(), a("div", b, [
+}, P = { class: "signinwithsui_dialog_inner_card" }, D = { class: "signinwithsui_dialog_list" }, B = ["onClick"], L = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_icon" }, $ = ["src"], R = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_name" };
+function N(e, s, t, d, n, i) {
+  return n.isActive ? (o(), a("div", I, [
     c("div", {
       class: "signinwithsui_dialog_backdrop",
       onClick: s[0] || (s[0] = (...r) => i.onBackdrop && i.onBackdrop(...r))
@@ -119,32 +119,32 @@ function R(e, s, t, d, n, i) {
     c("div", {
       class: _(["signinwithsui_dialog_inner", { signinwithsui_dialog_inner_active: n.isVisible }])
     }, [
-      c("div", I, [
-        c("div", P, [
-          (o(!0), a(g, null, v(t.adapters, (r, h) => (o(), a(g, { key: h }, [
+      c("div", P, [
+        c("div", D, [
+          (o(!0), a(g, null, C(t.adapters, (r, h) => (o(), a(g, { key: h }, [
             r && r.name && (r.isDefault || r.okForSui) ? (o(), a("div", {
               key: 0,
               class: _(["signinwithsui_dialog_item", { signinwithsui_dialog_item_disabled: r.isDefault }]),
               onClick: (m) => i.onAdapterClick(r)
             }, [
-              c("div", B, [
+              c("div", L, [
                 c("img", {
                   loading: "lazy",
                   fetchpriority: "auto",
                   "aria-hidden": "true",
                   draggable: "false",
                   src: r.icon
-                }, null, 8, L)
+                }, null, 8, $)
               ]),
-              c("div", $, w(r.name), 1)
-            ], 10, D)) : u("", !0)
+              c("div", R, p(r.name), 1)
+            ], 10, B)) : u("", !0)
           ], 64))), 128))
         ])
       ])
     ], 2)
   ])) : u("", !0);
 }
-const N = /* @__PURE__ */ l(k, [["render", R], ["__scopeId", "data-v-7fbb2031"]]), W = {
+const W = /* @__PURE__ */ l(b, [["render", N], ["__scopeId", "data-v-7fbb2031"]]), T = {
   name: "SignInWithSui",
   emits: ["suiMaster", "provider", "client", "adapter", "disconnected", "connected", "wrongchain", "displayAddress"],
   props: {
@@ -190,8 +190,8 @@ const N = /* @__PURE__ */ l(k, [["render", R], ["__scopeId", "data-v-7fbb2031"]]
   },
   computed: {},
   components: {
-    SuidoubleSync: y,
-    SignInWithSuiDialog: N
+    SuidoubleSync: k,
+    SignInWithSuiDialog: W
   },
   methods: {
     checkDisplayAddress() {
@@ -342,26 +342,28 @@ const N = /* @__PURE__ */ l(k, [["render", R], ["__scopeId", "data-v-7fbb2031"]]
   mounted: async function() {
     this.initialize();
   }
-}, T = { key: 0 }, q = { key: 1 };
-function E(e, s, t, d, n, i) {
+}, q = { key: 0 }, E = { key: 1 };
+function x(e, s, t, d, n, i) {
   const r = f("SignInWithSuiDialog"), h = f("SuidoubleSync");
   return o(), a("div", null, [
     t.visible ? (o(), a("div", {
       key: 0,
       onClick: s[0] || (s[0] = (...m) => i.onClick && i.onClick(...m))
     }, [
-      n.connectedAddress ? u("", !0) : (o(), a("span", T, "Connect with Sui")),
-      n.connectedAddress ? (o(), a("span", q, w(n.displayAddress), 1)) : u("", !0)
+      n.connectedAddress ? u("", !0) : (o(), a("span", q, "Connect with Sui")),
+      n.connectedAddress ? (o(), a("span", E, p(n.displayAddress), 1)) : u("", !0)
     ])) : u("", !0),
-    p(r, {
-      showing: n.showingDialog,
-      onHidden: s[1] || (s[1] = (m) => {
-        this.showingDialog = !1;
-      }),
-      adapters: n.adapters,
-      onClick: i.onAdapterClick
-    }, null, 8, ["showing", "adapters", "onClick"]),
-    n.libsRequested ? (o(), C(h, {
+    (o(), w(M, { to: "body" }, [
+      S(r, {
+        showing: n.showingDialog,
+        onHidden: s[1] || (s[1] = (m) => {
+          this.showingDialog = !1;
+        }),
+        adapters: n.adapters,
+        onClick: i.onAdapterClick
+      }, null, 8, ["showing", "adapters", "onClick"])
+    ])),
+    n.libsRequested ? (o(), w(h, {
       key: 1,
       ref: "sui",
       rpcSettings: t.rpcSettings,
@@ -374,7 +376,7 @@ function E(e, s, t, d, n, i) {
     }, null, 8, ["rpcSettings", "defaultChain", "onAdapters", "onSuiMaster", "onLoaded", "onConnected", "onDisconnected"])) : u("", !0)
   ]);
 }
-const x = /* @__PURE__ */ l(W, [["render", E]]), O = {
+const O = /* @__PURE__ */ l(T, [["render", x]]), V = {
   name: "SignInWithSuiButton",
   emits: ["suiMaster", "provider", "client", "adapter", "disconnected", "connected", "wrongchain", "displayAddress"],
   props: {
@@ -388,7 +390,7 @@ const x = /* @__PURE__ */ l(W, [["render", E]]), O = {
     }
   },
   components: {
-    SignInWithSui: x
+    SignInWithSui: O
   },
   data() {
     return {
@@ -423,18 +425,19 @@ const x = /* @__PURE__ */ l(W, [["render", E]]), O = {
       this.$emit("adapter", e);
     }
   }
-}, V = { class: "signinwithsui_button_inner" }, z = {
+}, z = { class: "signinwithsui_button_inner" }, j = {
   key: 0,
   class: "signinwithsui_button_inner"
 };
-function j(e, s, t, d, n, i) {
+function F(e, s, t, d, n, i) {
   const r = f("SignInWithSui");
   return o(), a("div", {
     class: "signinwithsui_button",
     onClick: s[0] || (s[0] = (...h) => i.onClick && i.onClick(...h))
   }, [
-    c("div", V, [
-      p(r, {
+    c("div", z, [
+      S(r, {
+        visible: !0,
         defaultChain: t.defaultChain,
         persist: t.persist,
         ref: "signin",
@@ -447,11 +450,11 @@ function j(e, s, t, d, n, i) {
         onDisplayAddress: i.onDisplayAddress
       }, null, 8, ["defaultChain", "persist", "onProvider", "onOnAdapter", "onWrongchain", "onConnected", "onDisconnected", "onSuiMaster", "onDisplayAddress"])
     ]),
-    n.connectedAddress ? (o(), a("div", z, "disconnect")) : u("", !0)
+    n.connectedAddress ? (o(), a("div", j, "disconnect")) : u("", !0)
   ]);
 }
-const H = /* @__PURE__ */ l(O, [["render", j], ["__scopeId", "data-v-9be482c4"]]);
+const K = /* @__PURE__ */ l(V, [["render", F], ["__scopeId", "data-v-c2cacafa"]]);
 export {
-  x as SignInWithSui,
-  H as SignInWithSuiButton
+  O as SignInWithSui,
+  K as SignInWithSuiButton
 };

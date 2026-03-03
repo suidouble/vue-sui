@@ -6,7 +6,9 @@
             <span v-if="connectedAddress">{{ displayAddress }}</span>
         </div>
 
-        <SignInWithSuiDialog :showing="showingDialog" @hidden="this.showingDialog = false;" :adapters="adapters" @click="onAdapterClick" />
+        <Teleport to="body">
+            <SignInWithSuiDialog :showing="showingDialog" @hidden="this.showingDialog = false;" :adapters="adapters" @click="onAdapterClick" />
+        </Teleport>
         <SuidoubleSync ref="sui" v-if="libsRequested" :rpcSettings="rpcSettings" :defaultChain="defaultChain" @adapters="onSuiAdapters" @suiMaster="onSuiMaster" @loaded="onLibsLoaded" @connected="onConnected" @disconnected="onDisconnected"  />
     </div>
 

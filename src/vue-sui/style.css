@@ -117,10 +117,11 @@
     min-height: 48px;
     padding: 8px 16px;
     color: inherit;
-    transition: color .3s,background-color .3s;
+    transition: color, background-color, opacity .3s ease-in-out;
     pointer-events: all;
     background-color: transparent;
     user-select: none;
+    opacity: 1;
 }
 
 .signinwithsui_dialog_item_disabled {

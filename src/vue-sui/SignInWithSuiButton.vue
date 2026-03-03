@@ -1,7 +1,7 @@
 <template>
     <div class="signinwithsui_button"  @click="onClick">
         <div class="signinwithsui_button_inner">
-            <SignInWithSui :defaultChain="defaultChain" :persist="persist" ref="signin" @provider="onProvider" @onAdapter="onAdapter" @wrongchain="onWrongChain" @connected="onConnected" @disconnected="onDisconnected" @suiMaster="onSuiMaster" @displayAddress="onDisplayAddress" />
+            <SignInWithSui :visible="true" :defaultChain="defaultChain" :persist="persist" ref="signin" @provider="onProvider" @onAdapter="onAdapter" @wrongchain="onWrongChain" @connected="onConnected" @disconnected="onDisconnected" @suiMaster="onSuiMaster" @displayAddress="onDisplayAddress" />
         </div>
         <div class="signinwithsui_button_inner" v-if="connectedAddress">disconnect</div>
     </div>
