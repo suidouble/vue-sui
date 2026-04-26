@@ -108,7 +108,7 @@ export default {
                 if (cached !== undefined) {
                     this.resolvedNameServiceName = cached;
                 } else {
-                    const name = await this.suiMaster.resolveNameServiceName();
+                    const name = await this.suiMaster.defaultNameServiceName();
                     this.resolvedNameServiceName = name;
                     this.setCache(cacheKey, name, cacheTTL);
                 }
@@ -124,13 +124,17 @@ export default {
          * @param {SuiMaster} suiMaster 
          */
         onSuiMaster(suiMaster) {
+            console.log('[SignInWithSui] onSuiMaster, instanceN:', suiMaster?.instanceN, 'address:', suiMaster?.address, 'connectedChain:', suiMaster?.connectedChain, 'defaultChain:', this.defaultChain);
             this.suiMaster = suiMaster;
 
-            if (!this.defaultChain || this.defaultChain == this.suiMaster.connectedChain) {
+            const normalizeChain = (c) => c ? c.replace(/^sui:/, '') : c;
+            if (!this.defaultChain || normalizeChain(this.defaultChain) == normalizeChain(this.suiMaster.connectedChain)) {
+                console.log('[SignInWithSui] chain matches, emitting suiMaster to parent');
                 this.$emit('suiMaster', suiMaster);
 
                 suiMaster.getClient()
                     .then((client)=>{
+                        console.log('[SignInWithSui] got client:', client?.network);
                         this.$emit('client', client);
                         this.$emit('provider', client); // compatibility with 0.x versions
 
@@ -141,6 +145,8 @@ export default {
                     });
 
                 this.getNameServiceName(); // also check the NS
+            } else {
+                console.log('[SignInWithSui] chain MISMATCH — defaultChain:', this.defaultChain, 'suiMaster.connectedChain:', this.suiMaster.connectedChain);
             }
 
             if (this.__suiMasterPromise) {
@@ -314,24 +320,26 @@ export default {
             this.__libsRequestedPromiseResolver();
         },
         onConnected() {
+            const connectedChain = this.$refs.sui?.suiInBrowser?.connectedChain;
+            const connectedAddress = this.$refs.sui?.suiInBrowser?.connectedAddress;
+            console.log('[SignInWithSui] onConnected, address:', connectedAddress, 'chain:', connectedChain, 'defaultChain:', this.defaultChain);
             this.showingDialog = false;
 
-            const connectedChain = this.$refs.sui.suiInBrowser.connectedChain;
-
             if (!this.defaultChain || this.defaultChain == connectedChain) {
-                this.connectedAddress = this.$refs.sui.suiInBrowser.connectedAddress;
-                this.connectedChain = this.$refs.sui.suiInBrowser.connectedChain;
-
+                this.connectedAddress = connectedAddress;
+                this.connectedChain = connectedChain;
+                console.log('[SignInWithSui] emitting "connected" to parent, address:', this.connectedAddress);
                 this.$emit('connected', this.connectedAddress);
                 this.checkDisplayAddress();
             } else {
                 this.connectedAddress = null;
-
+                console.log('[SignInWithSui] wrong chain, emitting "wrongchain":', connectedChain);
                 this.$emit('wrongchain', connectedChain);
                 this.checkDisplayAddress();
             }
         },
         onDisconnected() {
+            console.log('[SignInWithSui] onDisconnected');
             this.connectedAddress = null;
 
             this.$emit('disconnected');

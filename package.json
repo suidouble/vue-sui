@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/suidouble/vue-sui.git"
   },
-  "version": "2.5.0",
+  "version": "2.16.0",
   "files": [
     "dist"
   ],
@@ -19,14 +19,14 @@
     "./index.css": "./dist/index.css"
   },
   "scripts": {
-    "servedemo": "vite --config demo.vite.config.mjs",
+    "servedemo": "vite --config demo.vite.config.mjs --force",
     "builddemo": "NODE_ENV=production vite build --config demo.vite.config.mjs --emptyOutDir",
     "buildcomponent": "NODE_ENV=production vite build --config component.vite.config.mjs",
     "prepublishOnly": "npm run buildcomponent"
   },
   "peerDependencies": {
-    "suidouble": "^2.5.0",
-    "vue": "^3.0.0"
+    "vue": "^3.0.0",
+    "suidouble": "^2.16.0"
   },
   "keywords": [
     "sui",
@@ -43,11 +43,11 @@
   "author": "suidouble (https://github.com/suidouble)",
   "license": "MIT",
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.3",
-    "suidouble": "^2.5.0",
-    "vite": "^5.4.18",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "suidouble": "^2.16.0",
+    "vite": "^5.4.21",
     "vite-plugin-lib-inject-css": "^2.2.2",
-    "vue": "^3.5.13"
+    "vue": "^3.5.33"
   },
   "sideEffects": [
     "**/*.css"

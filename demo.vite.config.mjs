@@ -10,6 +10,9 @@ export default defineConfig({
             vue(),
             libInjectCss(),
         ],
+    resolve: {
+        dedupe: ['suidouble'],
+    },
     build: {
         rollupOptions: {
             external: [],

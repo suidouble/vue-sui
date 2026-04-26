@@ -276,6 +276,7 @@ export default {
 					// this.events.push({name: 'tx not sent', args: []});
 				}
 			} catch (e) {
+				console.error(e);
 				alert(e);
 			}
 		},
