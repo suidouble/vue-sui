@@ -18,6 +18,7 @@
 					@provider="onProvider" 
 					@adapter="onAdapter" 
 					@disconnected="onDisconnected"
+					@wrongchain="onWrongChain"
 					@displayAddress="onDisplayAddress"
 					:visible="false"
 					/>
@@ -46,6 +47,9 @@
 					</td></tr>
 					<tr><td>Connected to</td><td>
 						{{ connectedChain }}
+					</td></tr>
+					<tr><td>Connected with</td><td>
+						{{ adapter ? adapter.name : '' }}
 					</td></tr>
 					<tr><td>defaultChain</td><td>
 						{{ defaultChain }}
@@ -109,7 +113,7 @@ import { SignInWithSuiButton } from 'vue-sui';
 &lt;SignInWithSuiButton :defaultChain="defaultChain" :persist="true" /&gt;
 		</code></pre>
 
-		<SignInWithSuiButton :defaultChain="defaultChain" @wrongchain="onWrongChain" />
+		<SignInWithSuiButton :defaultChain="defaultChain"  />
 
 		<p>SignInWithSuiButton emits the same set of events as underlying SignInWithSui component</p>
 
@@ -218,8 +222,8 @@ export default {
 		onWrongChain(tryingTo) {
 			this.events.unshift({name: 'wrongchain', args: arguments});
 
-			this.connectedAddress = null;
-			this.connectedChain = null;
+			// this.connectedAddress = null;
+			// this.connectedChain = null;
 
 			this.tryingTo = tryingTo;
 		},
@@ -251,6 +255,7 @@ export default {
 			this.events.unshift({name: 'disconnected', args: arguments});
 
 			this.connectedAddress = null;
+			this.adapter = null;
 
 			this.tryingTo = null;
 		},

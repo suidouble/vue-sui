@@ -61,9 +61,6 @@ export default {
             defaultChain: this.defaultChain,
         });
 
-        // only the instance that CREATED the singleton should emit events to its parent
-        // this._isPrimary = !existedBefore;
-        // console.log('[SuidoubleSync] uid:', this.$.uid, '_isPrimary:', this._isPrimary);
         if (this.rpcSettings) {
             this.suiInBrowser.setRPC(this.rpcSettings);
         }
@@ -75,7 +72,6 @@ export default {
             this.$emit('adapters', this.adapters);
         };
         this._onConnected = () => {
-            // console.log('[SuidoubleSync] "connected" event received, uid:', this.$.uid, '_isPrimary:', this._isPrimary);
             this.connectedAddress = this.suiInBrowser.connectedAddress;
             this.connectedChain = this.suiInBrowser.connectedChain;
             this.reinitSuiMaster().then(() => {
@@ -98,7 +94,6 @@ export default {
         });
 
         if (this.suiInBrowser.isConnected) {
-            // console.log('[SuidoubleSync] already connected on mount, address:', this.suiInBrowser.connectedAddress, 'chain:', this.suiInBrowser.connectedChain);
             this.connectedAddress = this.suiInBrowser.connectedAddress;
             this.connectedChain = this.suiInBrowser.connectedChain;
             this.reinitSuiMaster().then(() => {
