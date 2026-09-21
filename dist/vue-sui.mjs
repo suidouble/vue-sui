@@ -1,548 +1,526 @@
-import { openBlock as r, createElementBlock as c, createElementVNode as m, normalizeClass as y, Fragment as C, renderList as I, toDisplayString as M, createCommentVNode as f, resolveComponent as v, createBlock as A, Teleport as k, createVNode as b } from "vue";
-import { SuiInBrowser as P } from "suidouble";
-import './index.css';const w = (e, i) => {
-  const t = e.__vccOpts || e;
-  for (const [o, s] of i)
-    t[o] = s;
-  return t;
-}, D = {
-  name: "SuiSync",
-  props: {
-    defaultChain: {
-      default: "sui:devnet",
-      type: String
-    },
-    rpcSettings: {
-      type: Object
-    }
-  },
-  data() {
-    return {
-      connectedAddress: null,
-      connectedChain: null,
-      adapters: [],
-      suiInBrowser: null,
-      suiMaster: null
-      // lastSuiMasterInstanceN: null,
-    };
-  },
-  emits: ["connect", "connected", "loaded", "disconnected", "error", "suiMaster", "adapters"],
-  components: {},
-  watch: {},
-  methods: {
-    async reinitSuiMaster() {
-      this.suiMaster = await this.suiInBrowser.getSuiMaster(), this.$emit("suiMaster", this.suiMaster);
-    },
-    async setRPC(e = {}) {
-      await this.suiInBrowser.setRPC(e), await this.reinitSuiMaster();
-    }
-  },
-  beforeUnmount() {
-    var e, i, t;
-    this._onAdapter && ((e = this.suiInBrowser) == null || e.removeEventListener("adapter", this._onAdapter)), this._onConnected && ((i = this.suiInBrowser) == null || i.removeEventListener("connected", this._onConnected)), this._onDisconnected && ((t = this.suiInBrowser) == null || t.removeEventListener("disconnected", this._onDisconnected));
-  },
-  mounted: function() {
-    this.suiInBrowser = P.getSingleton({
-      debug: !0,
-      defaultChain: this.defaultChain
-    }), this.rpcSettings && this.suiInBrowser.setRPC(this.rpcSettings), this.adapters = Object.values(this.suiInBrowser.adapters), this._onAdapter = (e) => {
-      this.adapters.push(e.detail), this.$emit("adapters", this.adapters);
-    }, this._onConnected = () => {
-      this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSuiMaster().then(() => {
-        this.$emit("connected", this.suiInBrowser);
-      });
-    }, this._onDisconnected = () => {
-      this.connectedAddress = null, this.connectedChain = null, this.$emit("disconnected");
-    }, this.suiInBrowser.addEventListener("adapter", this._onAdapter), this.suiInBrowser.addEventListener("connected", this._onConnected), this.suiInBrowser.addEventListener("disconnected", this._onDisconnected), this.$nextTick(() => {
-      this.$emit("loaded", this.suiInBrowser), this.$emit("adapters", this.adapters);
-    }), this.suiInBrowser.isConnected && (this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSuiMaster().then(() => {
-      this.$emit("connected", this.suiInBrowser);
-    })), this.reinitSuiMaster();
-  },
-  computed: {}
+import { Fragment as e, Teleport as t, createBlock as n, createCommentVNode as r, createElementBlock as i, createElementVNode as a, createVNode as o, normalizeClass as s, openBlock as c, renderList as l, resolveComponent as u, toDisplayString as d } from "vue";
+import { SuiInBrowser as f } from "suidouble";
+import './index.css';//#region \0plugin-vue:export-helper
+var p = (e, t) => {
+	let n = e.__vccOpts || e;
+	for (let [e, r] of t) n[e] = r;
+	return n;
+}, m = {
+	name: "SuiSync",
+	props: {
+		defaultChain: {
+			default: "sui:devnet",
+			type: String
+		},
+		rpcSettings: { type: Object }
+	},
+	data() {
+		return {
+			connectedAddress: null,
+			connectedChain: null,
+			adapters: [],
+			suiInBrowser: null,
+			suiMaster: null
+		};
+	},
+	emits: [
+		"connect",
+		"connected",
+		"loaded",
+		"disconnected",
+		"error",
+		"suiMaster",
+		"adapters"
+	],
+	components: {},
+	watch: {},
+	methods: {
+		async reinitSuiMaster() {
+			this.suiMaster = await this.suiInBrowser.getSuiMaster(), this.$emit("suiMaster", this.suiMaster);
+		},
+		async setRPC(e = {}) {
+			await this.suiInBrowser.setRPC(e), await this.reinitSuiMaster();
+		}
+	},
+	beforeUnmount() {
+		this._onAdapter && this.suiInBrowser?.removeEventListener("adapter", this._onAdapter), this._onConnected && this.suiInBrowser?.removeEventListener("connected", this._onConnected), this._onDisconnected && this.suiInBrowser?.removeEventListener("disconnected", this._onDisconnected);
+	},
+	mounted: function() {
+		this.suiInBrowser = f.getSingleton({
+			debug: !0,
+			defaultChain: this.defaultChain
+		}), this.rpcSettings && this.suiInBrowser.setRPC(this.rpcSettings), this.adapters = Object.values(this.suiInBrowser.adapters), this._onAdapter = (e) => {
+			this.adapters.push(e.detail), this.$emit("adapters", this.adapters);
+		}, this._onConnected = () => {
+			this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSuiMaster().then(() => {
+				this.$emit("connected", this.suiInBrowser);
+			});
+		}, this._onDisconnected = () => {
+			this.connectedAddress = null, this.connectedChain = null, this.$emit("disconnected");
+		}, this.suiInBrowser.addEventListener("adapter", this._onAdapter), this.suiInBrowser.addEventListener("connected", this._onConnected), this.suiInBrowser.addEventListener("disconnected", this._onDisconnected), this.$nextTick(() => {
+			this.$emit("loaded", this.suiInBrowser), this.$emit("adapters", this.adapters);
+		}), this.suiInBrowser.isConnected && (this.connectedAddress = this.suiInBrowser.connectedAddress, this.connectedChain = this.suiInBrowser.connectedChain, this.reinitSuiMaster().then(() => {
+			this.$emit("connected", this.suiInBrowser);
+		})), this.reinitSuiMaster();
+	},
+	computed: {}
 };
-function B(e, i, t, o, s, n) {
-  return r(), c("div");
+function h(e, t, n, r, a, o) {
+	return c(), i("div");
 }
-const L = /* @__PURE__ */ w(D, [["render", B]]), R = {
-  name: "SignInWithSuiDialog",
-  emits: ["click", "hidden"],
-  props: {
-    adapters: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
-    showing: {
-      type: Boolean,
-      default: !1
-    }
-  },
-  data() {
-    return {
-      isActive: !1,
-      isVisible: !1
-    };
-  },
-  watch: {
-    showing: function() {
-      this.showing ? this.show() : this.hide();
-    }
-  },
-  computed: {},
-  components: {},
-  methods: {
-    onAdapterClick(e) {
-      this.$emit("click", e);
-    },
-    show() {
-      this.isActive = !0, setTimeout(() => {
-        this.isVisible = !0;
-      }, 10);
-    },
-    hide() {
-      this.isVisible = !1, setTimeout(() => {
-        this.isActive = !1, this.$emit("hidden");
-      }, 300);
-    },
-    onBackdrop() {
-      this.hide(), console.log(this.adapters);
-    }
-  },
-  beforeMount: function() {
-  },
-  mounted: async function() {
-  }
-}, $ = {
-  key: 0,
-  class: "signinwithsui_dialog"
-}, W = { class: "signinwithsui_dialog_inner_card" }, T = { class: "signinwithsui_dialog_list" }, N = ["onClick"], E = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_icon" }, q = ["src"], x = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_name" };
-function O(e, i, t, o, s, n) {
-  return s.isActive ? (r(), c("div", $, [
-    m("div", {
-      class: "signinwithsui_dialog_backdrop",
-      onClick: i[0] || (i[0] = (...a) => n.onBackdrop && n.onBackdrop(...a))
-    }),
-    m("div", {
-      class: y(["signinwithsui_dialog_inner", { signinwithsui_dialog_inner_active: s.isVisible }])
-    }, [
-      m("div", W, [
-        m("div", T, [
-          (r(!0), c(C, null, I(t.adapters, (a, d) => (r(), c(C, { key: d }, [
-            a && a.name && (a.isDefault || a.okForSui) ? (r(), c("div", {
-              key: 0,
-              class: y(["signinwithsui_dialog_item", { signinwithsui_dialog_item_disabled: a.isDefault }]),
-              onClick: (l) => n.onAdapterClick(a)
-            }, [
-              m("div", E, [
-                m("img", {
-                  loading: "lazy",
-                  fetchpriority: "auto",
-                  "aria-hidden": "true",
-                  draggable: "false",
-                  src: a.icon
-                }, null, 8, q)
-              ]),
-              m("div", x, M(a.name), 1)
-            ], 10, N)) : f("", !0)
-          ], 64))), 128))
-        ])
-      ])
-    ], 2)
-  ])) : f("", !0);
+var g = /*#__PURE__*/ p(m, [["render", h]]), _ = {
+	name: "SignInWithSuiDialog",
+	emits: ["click", "hidden"],
+	props: {
+		adapters: {
+			type: Array,
+			default() {
+				return [];
+			}
+		},
+		showing: {
+			type: Boolean,
+			default: !1
+		}
+	},
+	data() {
+		return {
+			isActive: !1,
+			isVisible: !1
+		};
+	},
+	watch: { showing: function() {
+		this.showing ? this.show() : this.hide();
+	} },
+	computed: {},
+	components: {},
+	methods: {
+		onAdapterClick(e) {
+			this.$emit("click", e);
+		},
+		show() {
+			this.isActive = !0, setTimeout(() => {
+				this.isVisible = !0;
+			}, 10);
+		},
+		hide() {
+			this.isVisible = !1, setTimeout(() => {
+				this.isActive = !1, this.$emit("hidden");
+			}, 300);
+		},
+		onBackdrop() {
+			this.hide(), console.log(this.adapters);
+		}
+	},
+	beforeMount: function() {},
+	mounted: async function() {}
+}, v = {
+	key: 0,
+	class: "signinwithsui_dialog"
+}, y = { class: "signinwithsui_dialog_inner_card" }, b = { class: "signinwithsui_dialog_list" }, x = ["onClick"], S = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_icon" }, C = ["src"], w = { class: "signinwithsui_dialog_item_column signinwithsui_dialog_item_name" };
+function T(t, n, o, u, f, p) {
+	return f.isActive ? (c(), i("div", v, [a("div", {
+		class: "signinwithsui_dialog_backdrop",
+		onClick: n[0] ||= (...e) => p.onBackdrop && p.onBackdrop(...e)
+	}), a("div", { class: s(["signinwithsui_dialog_inner", { signinwithsui_dialog_inner_active: f.isVisible }]) }, [a("div", y, [a("div", b, [(c(!0), i(e, null, l(o.adapters, (t, n) => (c(), i(e, { key: n }, [t && t.name && (t.isDefault || t.okForSui) ? (c(), i("div", {
+		key: 0,
+		class: s(["signinwithsui_dialog_item", { signinwithsui_dialog_item_disabled: t.isDefault }]),
+		onClick: (e) => p.onAdapterClick(t)
+	}, [a("div", S, [a("img", {
+		loading: "lazy",
+		fetchpriority: "auto",
+		"aria-hidden": "true",
+		draggable: "false",
+		src: t.icon
+	}, null, 8, C)]), a("div", w, d(t.name), 1)], 10, x)) : r("", !0)], 64))), 128))])])], 2)])) : r("", !0);
 }
-const F = /* @__PURE__ */ w(R, [["render", O], ["__scopeId", "data-v-7fbb2031"]]);
-let _ = null;
-const S = new EventTarget(), V = {
-  name: "SignInWithSui",
-  emits: ["suiMaster", "provider", "client", "adapter", "disconnected", "connected", "wrongchain", "displayAddress"],
-  props: {
-    defaultChain: {
-      default: "sui:devnet",
-      type: String
-    },
-    rpcSettings: {
-      type: Object
-    },
-    auto: {
-      default: !0,
-      type: Boolean
-    },
-    visible: {
-      default: !0,
-      type: Boolean
-    },
-    persist: {
-      default: !1,
-      type: Boolean
-    }
-  },
-  data() {
-    return {
-      isLoading: !1,
-      libsRequested: !0,
-      adapters: [],
-      connectedAddress: null,
-      displayAddress: null,
-      resolvedNameServiceName: null,
-      connectedChain: null,
-      forceChainCalculated: null,
-      suiMaster: null,
-      activeAdapter: null,
-      showingDialog: !1
-    };
-  },
-  watch: {
-    defaultChain: async function(e) {
-      var t, o;
-      console.log("[SignInWithSui] defaultChain changed to", e, "— acceptedAdapter:", window.localStorage.getItem("vue-sui-accepted-adapter"));
-      const i = (t = this.$refs.sui) == null ? void 0 : t.suiInBrowser;
-      if (((o = i == null ? void 0 : i.activeAdapter) == null ? void 0 : o.name) === "Phantom" && i.activeAdapter.isConnected) {
-        console.log("[SignInWithSui] disconnecting Phantom before chain switch");
-        try {
-          await i.activeAdapter.disconnect();
-        } catch {
-        }
-      }
-      this.connectedAddress = null, this.connectedChain = null, this.activeAdapter = null, this.suiMaster = null, this.libsRequested = !1, await new Promise((s) => setTimeout(s, 50)), this.libsRequested = !0;
-    }
-  },
-  computed: {},
-  components: {
-    SuidoubleSync: L,
-    SignInWithSuiDialog: F
-  },
-  methods: {
-    _emit(e, i) {
-      this.$emit(e, i), this._isPrimary && S.dispatchEvent(new CustomEvent(e, { detail: i }));
-    },
-    checkDisplayAddress() {
-      let e = this.displayAddress;
-      this.connectedAddress ? this.connectedAddress && (this.resolvedNameServiceName ? e = this.resolvedNameServiceName : e = ("" + this.connectedAddress).substr(0, 6) + "..." + ("" + this.connectedAddress).substr(-4)) : e = null, this.displayAddress != e && (this.displayAddress = e, this._emit("displayAddress", this.displayAddress));
-    },
-    async getNameServiceName() {
-      if (this.suiMaster && this.suiMaster.address) {
-        const e = "resolvedNameServiceName_" + this.suiMaster.connectedChain + ":" + this.suiMaster.address, i = 10 * 60 * 1e3, t = this.getCache(e);
-        if (t !== void 0)
-          this.resolvedNameServiceName = t;
-        else {
-          const o = await this.suiMaster.defaultNameServiceName();
-          this.resolvedNameServiceName = o, this.setCache(e, o, i);
-        }
-        this.checkDisplayAddress();
-      } else
-        this.resolvedNameServiceName = null, this.checkDisplayAddress();
-    },
-    /**
-     * SuiMaster instance updated
-     * @param {SuiMaster} suiMaster
-     */
-    onSuiMaster(e) {
-      var a, d, l, u, g, p;
-      if (!this._isPrimary) return;
-      const i = ((l = (d = (a = this.$refs.sui) == null ? void 0 : a.suiInBrowser) == null ? void 0 : d.activeAdapter) == null ? void 0 : l.name) || null, t = window.localStorage.getItem("vue-sui-accepted-adapter"), o = ((e == null ? void 0 : e.connectedChain) || "unknown") + "|" + ((e == null ? void 0 : e.address) || "readonly") + "|" + (i || "none");
-      this._suiMasterCache[o] && console.log("[SignInWithSui] suiMaster overwrite:", o, this._suiMasterCache), this._suiMasterCache[o] = { adapter: i, accepted: t, ts: Date.now() }, console.log("[SignInWithSui] suiMaster cache:", this._suiMasterCache);
-      const s = (h) => h && h.replace(/^sui:/, "");
-      if (!(!this.defaultChain || s(this.defaultChain) == s(e == null ? void 0 : e.connectedChain))) {
-        this._emit("wrongchain", s(e == null ? void 0 : e.connectedChain)), this.scheduleReadonlyFallback(e);
-        return;
-      }
-      if (e != null && e.address) {
-        if (!t || i !== t) {
-          if (console.log("[SignInWithSui] ignoring suiMaster from", i, "— we was connected with:", t), t && !this._reconnectingAdapter) {
-            const h = (u = this.$refs.sui) == null ? void 0 : u.suiInBrowser;
-            (p = (g = h == null ? void 0 : h._adapters) == null ? void 0 : g[t]) != null && p.isConnected && (console.log("[SignInWithSui] trying to reconnect", t), this._reconnectingAdapter = !0, h.connect(t).finally(() => {
-              this._reconnectingAdapter = !1;
-            }));
-          }
-          this.scheduleReadonlyFallback(e);
-          return;
-        }
-        this._readonlyTimeout && (clearTimeout(this._readonlyTimeout), this._readonlyTimeout = null), this.applySuiMaster(e);
-      } else
-        t ? (console.log("[SignInWithSui] got readonly suiMaster, waiting 200ms for", t, "to connect"), this.scheduleReadonlyFallback(e)) : this.applySuiMaster(e);
-    },
-    scheduleReadonlyFallback(e) {
-      const i = this.defaultChain.startsWith("sui:") ? this.defaultChain : "sui:" + this.defaultChain, t = e.constructor, o = t.SuiUtils.suiClientFor(i);
-      this._pendingReadonlySuiMaster = new t({ client: o }), this._readonlyTimeout && clearTimeout(this._readonlyTimeout), this._readonlyTimeout = setTimeout(() => {
-        this._readonlyTimeout = null, this._pendingReadonlySuiMaster && !this.connectedAddress && (this.applySuiMaster(this._pendingReadonlySuiMaster), this._pendingReadonlySuiMaster = null);
-      }, 200);
-    },
-    applySuiMaster(e) {
-      console.log("[SignInWithSui] applySuiMaster:", e == null ? void 0 : e.connectedChain, e != null && e.address ? "connected as " + e.address : "readonly"), this.suiMaster = e, this._emit("suiMaster", e), e.getClient().then((i) => {
-        this._emit("client", i), this._emit("provider", i);
-      }), e.address ? (this.connectedAddress = e.address, this.connectedChain = e.connectedChain, this.showingDialog = !1, this._emit("connected", this.connectedAddress), e.signer && e.signer.activeAdapter && (this._emit("adapter", e.signer.activeAdapter), this.activeAdapter = e.signer.activeAdapter)) : (this.activeAdapter = null, this._emit("adapter", null), this.connectedAddress = null), this.checkDisplayAddress(), this.getNameServiceName(), this.__suiMasterPromise && this.suiMaster && (this.__suiMasterPromiseResolver(), this.__suiMasterPromise = null), this.__connectedSuiMasterPromise && this.isSuiMasterConnected() && (this.__connectedSuiMasterPromiseResolver(), this.__connectedSuiMasterPromise = null);
-    },
-    onSuiAdapters(e) {
-      this.adapters = e;
-    },
-    isSuiMasterConnected(e = null) {
-      return this.suiMaster && this.suiMaster.address ? !(e && this.suiMaster.connectedChain != e) : this.suiMaster && this.suiMaster.signer && this.suiMaster.signer.connectedAddress ? !(e && this.suiMaster.signer.connectedChain != e) : !1;
-    },
-    async onAdapterClick(e) {
-      var n, a, d, l;
-      if (this.showingDialog = !1, e.isDefault && !e.isInstalled)
-        return window.open(e.getDownloadURL(), "_blank"), !1;
-      console.log("[SignInWithSui] adapter clicked:", e.name, "— connecting");
-      const i = (u) => u && u.replace(/^sui:/, ""), t = i(this.defaultChain);
-      for (const u of Object.keys(this._suiMasterCache)) {
-        const [g, p, h] = u.split("|");
-        if (!(h !== e.name || p === "readonly") && i(g) !== t) {
-          (((n = e._standardAdapter) == null ? void 0 : n.chains) || []).map(i), console.log("[SignInWithSui] adapter", e.name, "is connected to", g, "but we need", this.defaultChain), this.$emit("wrongchain", i(g));
-          return;
-        }
-      }
-      window.localStorage.setItem("vue-sui-accepted-adapter", e.name), this.isLoading = !0;
-      const o = this._isPrimary ? this.$refs.sui : (a = _ == null ? void 0 : _.$refs) == null ? void 0 : a.sui, s = (o == null ? void 0 : o.suiInBrowser) || ((d = this.$refs.sui) == null ? void 0 : d.suiInBrowser);
-      ((l = s.activeAdapter) == null ? void 0 : l.name) === e.name && s.isConnected ? (console.log("[SignInWithSui] adapter", e.name, "already connected, re-requesting suiMaster"), await o.reinitSuiMaster()) : await s.connect(e), this.isLoading = !1;
-    },
-    async setRPC(e = {}) {
-      this.$refs.sui.setRPC(e);
-    },
-    async requestSuiMaster() {
-      if (this.suiMaster)
-        return this.suiMaster;
-      if (await this.requestLibs(), await new Promise((e) => {
-        setTimeout(e, 200);
-      }), this.suiMaster)
-        return this.suiMaster;
-      if (this.__suiMasterPromise) {
-        if (await this.__suiMasterPromise, this.suiMaster)
-          return this.suiMaster;
-        throw new Error("can not get suiMaster");
-      }
-      if (this.__suiMasterPromiseResolver = null, this.__suiMasterPromise = new Promise((e) => {
-        this.__suiMasterPromiseResolver = e;
-      }), await this.__suiMasterPromise, this.suiMaster)
-        return this.suiMaster;
-      throw new Error("can not get suiMaster");
-    },
-    async requestConnectedSuiMaster(e = null) {
-      if (this.isSuiMasterConnected(e))
-        return this.suiMaster;
-      if (await this.requestLibs(), await new Promise((i) => {
-        setTimeout(i, 200);
-      }), this.isSuiMasterConnected(e))
-        return this.suiMaster;
-      if (this.isLoading = !0, this.__connectedSuiMasterPromise) {
-        if (await this.__connectedSuiMasterPromise, this.isLoading = !1, this.isSuiMasterConnected(e))
-          return this.suiMaster;
-        throw new Error("can not get connection");
-      }
-      if (this.__connectedSuiMasterPromiseResolver = null, this.__connectedSuiMasterPromise = new Promise((i) => {
-        this.__connectedSuiMasterPromiseResolver = i;
-      }), this.showingDialog = !0, await this.__connectedSuiMasterPromise, this.isLoading = !1, this.isSuiMasterConnected(e))
-        return this.suiMaster;
-      throw new Error("can not get connection");
-    },
-    async connect() {
-      return await this.onClick();
-    },
-    async onClick() {
-      this.isLoading = !0, await this.requestLibs(), await new Promise((e) => {
-        setTimeout(e, 200);
-      }), this.connectedAddress || (this.showingDialog = !0), this.isLoading = !1;
-    },
-    async initialize() {
-      if (this.auto && (this.isLoading = !0, await this.requestLibs(), this.isLoading = !1), await new Promise((e) => {
-        setTimeout(e, 200);
-      }), this.persist) {
-        const e = window.localStorage.getItem("vue-sui-accepted-adapter");
-        e && this.adapters.forEach((i) => {
-          i.name && i.okForSui && i.name == e && this.onAdapterClick(i);
-        });
-      }
-    },
-    async requestLibs() {
-      this.libsRequested = !0, await this.__libsRequestedPromise;
-    },
-    onLibsLoaded() {
-      this.__libsRequestedPromiseResolver();
-    },
-    onConnected() {
-    },
-    onDisconnected() {
-      this._isPrimary && (this.connectedAddress = null, this.connectedChain = null, this.activeAdapter = null, this._emit("disconnected"), this.checkDisplayAddress());
-    },
-    async disconnect() {
-      var i;
-      window.localStorage.removeItem("vue-sui-accepted-adapter");
-      const e = (i = this.$refs.sui) == null ? void 0 : i.suiInBrowser;
-      e && e.activeAdapter && await e.activeAdapter.disconnect(), this.connectedAddress = null, this.connectedChain = null, this.activeAdapter = null, this.suiMaster = null, this.checkDisplayAddress();
-    },
-    setCache(e, i, t) {
-      const s = {
-        value: i,
-        expiry: (/* @__PURE__ */ new Date()).getTime() + t
-      };
-      window.localStorage.setItem(e, JSON.stringify(s));
-    },
-    getCache(e) {
-      try {
-        const i = window.localStorage.getItem(e);
-        if (!i)
-          return;
-        const t = JSON.parse(i);
-        if ((/* @__PURE__ */ new Date()).getTime() > t.expiry) {
-          window.localStorage.removeItem(e);
-          return;
-        }
-        return t.value;
-      } catch {
-        return;
-      }
-    }
-  },
-  beforeMount: function() {
-    if (this.__libsRequestedPromiseResolver = null, this.__libsRequestedPromise = new Promise((e) => {
-      this.__libsRequestedPromiseResolver = e;
-    }), this._readonlyTimeout = null, this._pendingReadonlySuiMaster = null, this._suiMasterCache = {}, this._isPrimary = !_, this._isPrimary && (_ = this), !this._isPrimary) {
-      this._busListeners = {};
-      const e = (i, t) => {
-        this._busListeners[i] = t, S.addEventListener(i, t);
-      };
-      e("suiMaster", (i) => {
-        var t;
-        this.suiMaster = i.detail, this.connectedChain = (t = i.detail) == null ? void 0 : t.connectedChain, this.$emit("suiMaster", i.detail);
-      }), e("client", (i) => {
-        this.$emit("client", i.detail);
-      }), e("provider", (i) => {
-        this.$emit("provider", i.detail);
-      }), e("connected", (i) => {
-        this.connectedAddress = i.detail, this.showingDialog = !1, this.$emit("connected", i.detail);
-      }), e("disconnected", () => {
-        this.connectedAddress = null, this.connectedChain = null, this.activeAdapter = null, this.suiMaster = null, this.$emit("disconnected"), this.checkDisplayAddress();
-      }), e("adapter", (i) => {
-        this.activeAdapter = i.detail, this.$emit("adapter", i.detail);
-      }), e("wrongchain", (i) => {
-        this.$emit("wrongchain", i.detail);
-      }), e("displayAddress", (i) => {
-        this.displayAddress = i.detail, this.$emit("displayAddress", i.detail);
-      });
-    }
-  },
-  beforeUnmount: function() {
-    if (_ === this && (_ = null), this._busListeners)
-      for (const [e, i] of Object.entries(this._busListeners))
-        S.removeEventListener(e, i);
-  },
-  mounted: async function() {
-    this.initialize();
-  }
-}, z = { key: 0 }, j = { key: 1 };
-function U(e, i, t, o, s, n) {
-  const a = v("SignInWithSuiDialog"), d = v("SuidoubleSync");
-  return r(), c("div", null, [
-    t.visible ? (r(), c("div", {
-      key: 0,
-      onClick: i[0] || (i[0] = (...l) => n.onClick && n.onClick(...l))
-    }, [
-      s.connectedAddress ? f("", !0) : (r(), c("span", z, "Connect with Sui")),
-      s.connectedAddress ? (r(), c("span", j, M(s.displayAddress), 1)) : f("", !0)
-    ])) : f("", !0),
-    (r(), A(k, { to: "body" }, [
-      b(a, {
-        showing: s.showingDialog,
-        onHidden: i[1] || (i[1] = (l) => {
-          this.showingDialog = !1;
-        }),
-        adapters: s.adapters,
-        onClick: n.onAdapterClick
-      }, null, 8, ["showing", "adapters", "onClick"])
-    ])),
-    s.libsRequested ? (r(), A(d, {
-      key: 1,
-      ref: "sui",
-      rpcSettings: t.rpcSettings,
-      defaultChain: t.defaultChain,
-      onAdapters: n.onSuiAdapters,
-      onSuiMaster: n.onSuiMaster,
-      onLoaded: n.onLibsLoaded,
-      onConnected: n.onConnected,
-      onDisconnected: n.onDisconnected
-    }, null, 8, ["rpcSettings", "defaultChain", "onAdapters", "onSuiMaster", "onLoaded", "onConnected", "onDisconnected"])) : f("", !0)
-  ]);
+var E = /*#__PURE__*/ p(_, [["render", T], ["__scopeId", "data-v-7fbb2031"]]), D = null, O = new EventTarget(), k = {
+	name: "SignInWithSui",
+	emits: [
+		"suiMaster",
+		"provider",
+		"client",
+		"adapter",
+		"disconnected",
+		"connected",
+		"wrongchain",
+		"displayAddress"
+	],
+	props: {
+		defaultChain: {
+			default: "sui:devnet",
+			type: String
+		},
+		rpcSettings: { type: Object },
+		auto: {
+			default: !0,
+			type: Boolean
+		},
+		visible: {
+			default: !0,
+			type: Boolean
+		},
+		persist: {
+			default: !1,
+			type: Boolean
+		}
+	},
+	data() {
+		return {
+			isLoading: !1,
+			libsRequested: !0,
+			adapters: [],
+			connectedAddress: null,
+			displayAddress: null,
+			resolvedNameServiceName: null,
+			connectedChain: null,
+			forceChainCalculated: null,
+			suiMaster: null,
+			activeAdapter: null,
+			showingDialog: !1
+		};
+	},
+	watch: { defaultChain: async function(e) {
+		console.log("[SignInWithSui] defaultChain changed to", e, "— acceptedAdapter:", window.localStorage.getItem("vue-sui-accepted-adapter"));
+		let t = this.$refs.sui?.suiInBrowser;
+		if (t?.activeAdapter?.name === "Phantom" && t.activeAdapter.isConnected) {
+			console.log("[SignInWithSui] disconnecting Phantom before chain switch");
+			try {
+				await t.activeAdapter.disconnect();
+			} catch {}
+		}
+		this.connectedAddress = null, this.connectedChain = null, this.activeAdapter = null, this.suiMaster = null, this.libsRequested = !1, await new Promise((e) => setTimeout(e, 50)), this.libsRequested = !0;
+	} },
+	computed: {},
+	components: {
+		SuidoubleSync: g,
+		SignInWithSuiDialog: E
+	},
+	methods: {
+		_emit(e, t) {
+			this.$emit(e, t), this._isPrimary && O.dispatchEvent(new CustomEvent(e, { detail: t }));
+		},
+		checkDisplayAddress() {
+			let e = this.displayAddress;
+			this.connectedAddress ? this.connectedAddress && (e = this.resolvedNameServiceName ? this.resolvedNameServiceName : ("" + this.connectedAddress).substr(0, 6) + "..." + ("" + this.connectedAddress).substr(-4)) : e = null, this.displayAddress != e && (this.displayAddress = e, this._emit("displayAddress", this.displayAddress));
+		},
+		async getNameServiceName() {
+			if (this.suiMaster && this.suiMaster.address) {
+				let e = "resolvedNameServiceName_" + this.suiMaster.connectedChain + ":" + this.suiMaster.address, t = this.getCache(e);
+				if (t !== void 0) this.resolvedNameServiceName = t;
+				else {
+					let t = await this.suiMaster.defaultNameServiceName();
+					this.resolvedNameServiceName = t, this.setCache(e, t, 6e5);
+				}
+				this.checkDisplayAddress();
+			} else this.resolvedNameServiceName = null, this.checkDisplayAddress();
+		},
+		onSuiMaster(e) {
+			if (!this._isPrimary) return;
+			let t = this.$refs.sui?.suiInBrowser?.activeAdapter?.name || null, n = window.localStorage.getItem("vue-sui-accepted-adapter"), r = (e?.connectedChain || "unknown") + "|" + (e?.address || "readonly") + "|" + (t || "none");
+			this._suiMasterCache[r] && console.log("[SignInWithSui] suiMaster overwrite:", r, this._suiMasterCache), this._suiMasterCache[r] = {
+				adapter: t,
+				accepted: n,
+				ts: Date.now()
+			}, console.log("[SignInWithSui] suiMaster cache:", this._suiMasterCache);
+			let i = (e) => e && e.replace(/^sui:/, "");
+			if (this.defaultChain && i(this.defaultChain) != i(e?.connectedChain)) {
+				this._emit("wrongchain", i(e?.connectedChain)), this.scheduleReadonlyFallback(e);
+				return;
+			}
+			if (e?.address) {
+				if (!n || t !== n) {
+					if (console.log("[SignInWithSui] ignoring suiMaster from", t, "— we was connected with:", n), n && !this._reconnectingAdapter) {
+						let e = this.$refs.sui?.suiInBrowser;
+						e?._adapters?.[n]?.isConnected && (console.log("[SignInWithSui] trying to reconnect", n), this._reconnectingAdapter = !0, e.connect(n).finally(() => {
+							this._reconnectingAdapter = !1;
+						}));
+					}
+					this.scheduleReadonlyFallback(e);
+					return;
+				}
+				this._readonlyTimeout &&= (clearTimeout(this._readonlyTimeout), null), this.applySuiMaster(e);
+			} else n ? (console.log("[SignInWithSui] got readonly suiMaster, waiting 200ms for", n, "to connect"), this.scheduleReadonlyFallback(e)) : this.applySuiMaster(e);
+		},
+		scheduleReadonlyFallback(e) {
+			let t = this.defaultChain.startsWith("sui:") ? this.defaultChain : "sui:" + this.defaultChain, n = e.constructor, r = n.SuiUtils.suiClientFor(t);
+			this._pendingReadonlySuiMaster = new n({ client: r }), this._readonlyTimeout && clearTimeout(this._readonlyTimeout), this._readonlyTimeout = setTimeout(() => {
+				this._readonlyTimeout = null, this._pendingReadonlySuiMaster && !this.connectedAddress && (this.applySuiMaster(this._pendingReadonlySuiMaster), this._pendingReadonlySuiMaster = null);
+			}, 200);
+		},
+		applySuiMaster(e) {
+			console.log("[SignInWithSui] applySuiMaster:", e?.connectedChain, e?.address ? "connected as " + e.address : "readonly"), this.suiMaster = e, this._emit("suiMaster", e), e.getClient().then((e) => {
+				this._emit("client", e), this._emit("provider", e);
+			}), e.address ? (this.connectedAddress = e.address, this.connectedChain = e.connectedChain, this.showingDialog = !1, this._emit("connected", this.connectedAddress), e.signer && e.signer.activeAdapter && (this._emit("adapter", e.signer.activeAdapter), this.activeAdapter = e.signer.activeAdapter)) : (this.activeAdapter = null, this._emit("adapter", null), this.connectedAddress = null), this.checkDisplayAddress(), this.getNameServiceName(), this.__suiMasterPromise && this.suiMaster && (this.__suiMasterPromiseResolver(), this.__suiMasterPromise = null), this.__connectedSuiMasterPromise && this.isSuiMasterConnected() && (this.__connectedSuiMasterPromiseResolver(), this.__connectedSuiMasterPromise = null);
+		},
+		onSuiAdapters(e) {
+			this.adapters = e;
+		},
+		isSuiMasterConnected(e = null) {
+			return this.suiMaster && this.suiMaster.address ? !(e && this.suiMaster.connectedChain != e) : this.suiMaster && this.suiMaster.signer && this.suiMaster.signer.connectedAddress ? !(e && this.suiMaster.signer.connectedChain != e) : !1;
+		},
+		async onAdapterClick(e) {
+			if (this.showingDialog = !1, e.isDefault && !e.isInstalled) return window.open(e.getDownloadURL(), "_blank"), !1;
+			console.log("[SignInWithSui] adapter clicked:", e.name, "— connecting");
+			let t = (e) => e && e.replace(/^sui:/, ""), n = t(this.defaultChain);
+			for (let r of Object.keys(this._suiMasterCache)) {
+				let [i, a, o] = r.split("|");
+				if (o === e.name && a !== "readonly" && t(i) !== n) {
+					(e._standardAdapter?.chains || []).map(t), console.log("[SignInWithSui] adapter", e.name, "is connected to", i, "but we need", this.defaultChain), this.$emit("wrongchain", t(i));
+					return;
+				}
+			}
+			window.localStorage.setItem("vue-sui-accepted-adapter", e.name), this.isLoading = !0;
+			let r = this._isPrimary ? this.$refs.sui : D?.$refs?.sui, i = r?.suiInBrowser || this.$refs.sui?.suiInBrowser;
+			i.activeAdapter?.name === e.name && i.isConnected ? (console.log("[SignInWithSui] adapter", e.name, "already connected, re-requesting suiMaster"), await r.reinitSuiMaster()) : await i.connect(e), this.isLoading = !1;
+		},
+		async setRPC(e = {}) {
+			this.$refs.sui.setRPC(e);
+		},
+		async requestSuiMaster() {
+			if (this.suiMaster || (await this.requestLibs(), await new Promise((e) => {
+				setTimeout(e, 200);
+			}), this.suiMaster)) return this.suiMaster;
+			if (this.__suiMasterPromise) {
+				if (await this.__suiMasterPromise, this.suiMaster) return this.suiMaster;
+				throw Error("can not get suiMaster");
+			}
+			if (this.__suiMasterPromiseResolver = null, this.__suiMasterPromise = new Promise((e) => {
+				this.__suiMasterPromiseResolver = e;
+			}), await this.__suiMasterPromise, this.suiMaster) return this.suiMaster;
+			throw Error("can not get suiMaster");
+		},
+		async requestConnectedSuiMaster(e = null) {
+			if (this.isSuiMasterConnected(e) || (await this.requestLibs(), await new Promise((e) => {
+				setTimeout(e, 200);
+			}), this.isSuiMasterConnected(e))) return this.suiMaster;
+			if (this.isLoading = !0, this.__connectedSuiMasterPromise) {
+				if (await this.__connectedSuiMasterPromise, this.isLoading = !1, this.isSuiMasterConnected(e)) return this.suiMaster;
+				throw Error("can not get connection");
+			}
+			if (this.__connectedSuiMasterPromiseResolver = null, this.__connectedSuiMasterPromise = new Promise((e) => {
+				this.__connectedSuiMasterPromiseResolver = e;
+			}), this.showingDialog = !0, await this.__connectedSuiMasterPromise, this.isLoading = !1, this.isSuiMasterConnected(e)) return this.suiMaster;
+			throw Error("can not get connection");
+		},
+		async connect() {
+			return await this.onClick();
+		},
+		async onClick() {
+			this.isLoading = !0, await this.requestLibs(), await new Promise((e) => {
+				setTimeout(e, 200);
+			}), this.connectedAddress || (this.showingDialog = !0), this.isLoading = !1;
+		},
+		async initialize() {
+			if (this.auto && (this.isLoading = !0, await this.requestLibs(), this.isLoading = !1), await new Promise((e) => {
+				setTimeout(e, 200);
+			}), this.persist) {
+				let e = window.localStorage.getItem("vue-sui-accepted-adapter");
+				e && this.adapters.forEach((t) => {
+					t.name && t.okForSui && t.name == e && this.onAdapterClick(t);
+				});
+			}
+		},
+		async requestLibs() {
+			this.libsRequested = !0, await this.__libsRequestedPromise;
+		},
+		onLibsLoaded() {
+			this.__libsRequestedPromiseResolver();
+		},
+		onConnected() {},
+		onDisconnected() {
+			this._isPrimary && (this.connectedAddress = null, this.connectedChain = null, this.activeAdapter = null, this._emit("disconnected"), this.checkDisplayAddress());
+		},
+		async disconnect() {
+			window.localStorage.removeItem("vue-sui-accepted-adapter");
+			let e = this.$refs.sui?.suiInBrowser;
+			e && e.activeAdapter && await e.activeAdapter.disconnect(), this.connectedAddress = null, this.connectedChain = null, this.activeAdapter = null, this.suiMaster = null, this.checkDisplayAddress();
+		},
+		setCache(e, t, n) {
+			let r = {
+				value: t,
+				expiry: (/* @__PURE__ */ new Date()).getTime() + n
+			};
+			window.localStorage.setItem(e, JSON.stringify(r));
+		},
+		getCache(e) {
+			try {
+				let t = window.localStorage.getItem(e);
+				if (!t) return;
+				let n = JSON.parse(t);
+				if ((/* @__PURE__ */ new Date()).getTime() > n.expiry) {
+					window.localStorage.removeItem(e);
+					return;
+				}
+				return n.value;
+			} catch {
+				return;
+			}
+		}
+	},
+	beforeMount: function() {
+		if (this.__libsRequestedPromiseResolver = null, this.__libsRequestedPromise = new Promise((e) => {
+			this.__libsRequestedPromiseResolver = e;
+		}), this._readonlyTimeout = null, this._pendingReadonlySuiMaster = null, this._suiMasterCache = {}, this._isPrimary = !D, this._isPrimary && (D = this), !this._isPrimary) {
+			this._busListeners = {};
+			let e = (e, t) => {
+				this._busListeners[e] = t, O.addEventListener(e, t);
+			};
+			e("suiMaster", (e) => {
+				this.suiMaster = e.detail, this.connectedChain = e.detail?.connectedChain, this.$emit("suiMaster", e.detail);
+			}), e("client", (e) => {
+				this.$emit("client", e.detail);
+			}), e("provider", (e) => {
+				this.$emit("provider", e.detail);
+			}), e("connected", (e) => {
+				this.connectedAddress = e.detail, this.showingDialog = !1, this.$emit("connected", e.detail);
+			}), e("disconnected", () => {
+				this.connectedAddress = null, this.connectedChain = null, this.activeAdapter = null, this.suiMaster = null, this.$emit("disconnected"), this.checkDisplayAddress();
+			}), e("adapter", (e) => {
+				this.activeAdapter = e.detail, this.$emit("adapter", e.detail);
+			}), e("wrongchain", (e) => {
+				this.$emit("wrongchain", e.detail);
+			}), e("displayAddress", (e) => {
+				this.displayAddress = e.detail, this.$emit("displayAddress", e.detail);
+			});
+		}
+	},
+	beforeUnmount: function() {
+		if (D === this && (D = null), this._busListeners) for (let [e, t] of Object.entries(this._busListeners)) O.removeEventListener(e, t);
+	},
+	mounted: async function() {
+		this.initialize();
+	}
+}, A = { key: 0 }, j = { key: 1 };
+function M(e, a, s, l, f, p) {
+	let m = u("SignInWithSuiDialog"), h = u("SuidoubleSync");
+	return c(), i("div", null, [
+		s.visible ? (c(), i("div", {
+			key: 0,
+			onClick: a[0] ||= (...e) => p.onClick && p.onClick(...e)
+		}, [f.connectedAddress ? r("", !0) : (c(), i("span", A, "Connect with Sui")), f.connectedAddress ? (c(), i("span", j, d(f.displayAddress), 1)) : r("", !0)])) : r("", !0),
+		(c(), n(t, { to: "body" }, [o(m, {
+			showing: f.showingDialog,
+			onHidden: a[1] ||= (e) => {
+				this.showingDialog = !1;
+			},
+			adapters: f.adapters,
+			onClick: p.onAdapterClick
+		}, null, 8, [
+			"showing",
+			"adapters",
+			"onClick"
+		])])),
+		f.libsRequested ? (c(), n(h, {
+			key: 1,
+			ref: "sui",
+			rpcSettings: s.rpcSettings,
+			defaultChain: s.defaultChain,
+			onAdapters: p.onSuiAdapters,
+			onSuiMaster: p.onSuiMaster,
+			onLoaded: p.onLibsLoaded,
+			onConnected: p.onConnected,
+			onDisconnected: p.onDisconnected
+		}, null, 8, [
+			"rpcSettings",
+			"defaultChain",
+			"onAdapters",
+			"onSuiMaster",
+			"onLoaded",
+			"onConnected",
+			"onDisconnected"
+		])) : r("", !0)
+	]);
 }
-const J = /* @__PURE__ */ w(V, [["render", U]]), H = {
-  name: "SignInWithSuiButton",
-  emits: ["suiMaster", "provider", "client", "adapter", "disconnected", "connected", "wrongchain", "displayAddress"],
-  props: {
-    defaultChain: {
-      default: "sui:devnet",
-      type: String
-    },
-    persist: {
-      default: !1,
-      type: Boolean
-    }
-  },
-  components: {
-    SignInWithSui: J
-  },
-  data() {
-    return {
-      connectedAddress: null,
-      connectedChain: null,
-      displayAddress: null
-    };
-  },
-  methods: {
-    onClick() {
-      this.connectedAddress ? this.$refs.signin.disconnect() : this.$refs.signin.connect();
-    },
-    onDisplayAddress(e) {
-      this.displayAddress = e, this.$emit("displayAddress", e);
-    },
-    onConnected(e) {
-      this.connectedAddress = e, this.$emit("connected", e);
-    },
-    onDisconnected() {
-      this.connectedAddress = null, this.$emit("disconnected");
-    },
-    onWrongChain(e) {
-      this.$emit("wrongchain", e);
-    },
-    onSuiMaster(e) {
-      this.$emit("suiMaster", e);
-    },
-    onProvider(e) {
-      this.$emit("client", e), this.$emit("provider", e);
-    },
-    onAdapter(e) {
-      this.$emit("adapter", e);
-    }
-  }
-}, K = { class: "signinwithsui_button_inner" }, G = {
-  key: 0,
-  class: "signinwithsui_button_inner"
+var N = /*#__PURE__*/ p(k, [["render", M]]), P = {
+	name: "SignInWithSuiButton",
+	emits: [
+		"suiMaster",
+		"provider",
+		"client",
+		"adapter",
+		"disconnected",
+		"connected",
+		"wrongchain",
+		"displayAddress"
+	],
+	props: {
+		defaultChain: {
+			default: "sui:devnet",
+			type: String
+		},
+		persist: {
+			default: !1,
+			type: Boolean
+		}
+	},
+	components: { SignInWithSui: N },
+	data() {
+		return {
+			connectedAddress: null,
+			connectedChain: null,
+			displayAddress: null
+		};
+	},
+	methods: {
+		onClick() {
+			this.connectedAddress ? this.$refs.signin.disconnect() : this.$refs.signin.connect();
+		},
+		onDisplayAddress(e) {
+			this.displayAddress = e, this.$emit("displayAddress", e);
+		},
+		onConnected(e) {
+			this.connectedAddress = e, this.$emit("connected", e);
+		},
+		onDisconnected() {
+			this.connectedAddress = null, this.$emit("disconnected");
+		},
+		onWrongChain(e) {
+			this.$emit("wrongchain", e);
+		},
+		onSuiMaster(e) {
+			this.$emit("suiMaster", e);
+		},
+		onProvider(e) {
+			this.$emit("client", e), this.$emit("provider", e);
+		},
+		onAdapter(e) {
+			this.$emit("adapter", e);
+		}
+	}
+}, F = { class: "signinwithsui_button_inner" }, I = {
+	key: 0,
+	class: "signinwithsui_button_inner"
 };
-function Q(e, i, t, o, s, n) {
-  const a = v("SignInWithSui");
-  return r(), c("div", {
-    class: "signinwithsui_button",
-    onClick: i[0] || (i[0] = (...d) => n.onClick && n.onClick(...d))
-  }, [
-    m("div", K, [
-      b(a, {
-        visible: !0,
-        defaultChain: t.defaultChain,
-        persist: t.persist,
-        ref: "signin",
-        onProvider: n.onProvider,
-        onOnAdapter: n.onAdapter,
-        onWrongchain: n.onWrongChain,
-        onConnected: n.onConnected,
-        onDisconnected: n.onDisconnected,
-        onSuiMaster: n.onSuiMaster,
-        onDisplayAddress: n.onDisplayAddress
-      }, null, 8, ["defaultChain", "persist", "onProvider", "onOnAdapter", "onWrongchain", "onConnected", "onDisconnected", "onSuiMaster", "onDisplayAddress"])
-    ]),
-    s.connectedAddress ? (r(), c("div", G, "disconnect")) : f("", !0)
-  ]);
+function L(e, t, n, s, l, d) {
+	let f = u("SignInWithSui");
+	return c(), i("div", {
+		class: "signinwithsui_button",
+		onClick: t[0] ||= (...e) => d.onClick && d.onClick(...e)
+	}, [a("div", F, [o(f, {
+		visible: !0,
+		defaultChain: n.defaultChain,
+		persist: n.persist,
+		ref: "signin",
+		onProvider: d.onProvider,
+		onOnAdapter: d.onAdapter,
+		onWrongchain: d.onWrongChain,
+		onConnected: d.onConnected,
+		onDisconnected: d.onDisconnected,
+		onSuiMaster: d.onSuiMaster,
+		onDisplayAddress: d.onDisplayAddress
+	}, null, 8, [
+		"defaultChain",
+		"persist",
+		"onProvider",
+		"onOnAdapter",
+		"onWrongchain",
+		"onConnected",
+		"onDisconnected",
+		"onSuiMaster",
+		"onDisplayAddress"
+	])]), l.connectedAddress ? (c(), i("div", I, "disconnect")) : r("", !0)]);
 }
-const Z = /* @__PURE__ */ w(H, [["render", Q], ["__scopeId", "data-v-c2cacafa"]]);
-export {
-  J as SignInWithSui,
-  Z as SignInWithSuiButton
-};
+var R = /*#__PURE__*/ p(P, [["render", L], ["__scopeId", "data-v-c2cacafa"]]);
+//#endregion
+export { N as SignInWithSui, R as SignInWithSuiButton };

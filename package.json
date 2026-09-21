@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/suidouble/vue-sui.git"
   },
-  "version": "2.17.0-3",
+  "version": "2.31.3",
   "files": [
     "dist"
   ],
@@ -25,8 +25,8 @@
     "prepublishOnly": "npm run buildcomponent"
   },
   "peerDependencies": {
-    "vue": "^3.0.0",
-    "suidouble": "^2.17.0-3"
+    "suidouble": "^2.31.3",
+    "vue": "^3.0.0"
   },
   "keywords": [
     "sui",
@@ -44,8 +44,8 @@
   "license": "MIT",
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.4",
-    "suidouble": "^2.17.0-3",
-    "vite": "^5.4.21",
+    "suidouble": "^2.31.3",
+    "vite": "^8.3.0",
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vue": "^3.5.33"
   },
